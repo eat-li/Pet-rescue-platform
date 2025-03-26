@@ -1,0 +1,237 @@
+{
+  "users": [
+    {
+      "id": "U1001",
+      "username": "12345678",
+      "password": "123456",
+      "role": "user",
+      "avatar": "https://example.com/avatars/u1001.jpg",
+      "nickname": "喵星人铲屎官",
+      "registration_time": "2023-10-05T14:30:00Z",
+      "last_login": "2023-10-20T09:15:00Z",
+      "pets": [
+        {
+          "id": "P5001",
+          "name": "橘子",
+          "type": "猫",
+          "breed": "橘猫",
+          "birthday": "2020-05-01",
+          "images": [
+            "https://example.com/pets/p5001_1.jpg"
+          ],
+          "description": "性格温顺，喜欢晒太阳"
+        }
+      ]
+    },
+    {
+      "id": "U1002",
+      "username": "dog_master",
+      "password": "dog123",
+      "role": "user",
+      "avatar": "https://example.com/avatars/u1002.jpg",
+      "nickname": "汪星人守护者",
+      "registration_time": "2023-10-06T09:45:00Z",
+      "last_login": "2023-10-21T16:20:00Z",
+      "pets": [
+        {
+          "id": "P5002",
+          "name": "旺财",
+          "type": "狗",
+          "breed": "金毛",
+          "birthday": "2019-08-15",
+          "images": [
+            "https://example.com/pets/p5002_1.jpg"
+          ],
+          "description": "活泼好动，喜欢游泳"
+        }
+      ]
+    },
+    {
+      "id": "U1003",
+      "username": "paws_mom",
+      "password": "ilovedogs",
+      "role": "user",
+      "avatar": "https://example.com/avatars/u1003.jpg",
+      "nickname": "爪爪妈妈",
+      "registration_time": "2023-10-07T11:20:00Z",
+      "last_login": "2023-10-22T14:00:00Z",
+      "pets": [
+        {
+          "id": "P5003",
+          "name": "雪球",
+          "type": "猫",
+          "breed": "波斯猫",
+          "birthday": "2021-02-14",
+          "images": [
+            "https://example.com/pets/p5003_1.jpg"
+          ],
+          "description": "长毛蓝眼，性格高傲"
+        }
+      ]
+    },
+    {
+      "username": "xinjieli1234",
+      "password": "123456",
+      "nickname": "xinjieli",
+      "id": "6320e0af2e",
+      "role": "user",
+      "registration_time": "2025-03-26T08:25:29.263Z",
+      "last_login": "2025-03-26T08:25:29.263Z",
+      "pets": []
+    }
+  ],
+  "diary": [
+    {
+      "id": "D2001",
+      "userId": "U1001",
+      "title": "我家布偶猫的日常",
+      "content": "今天给猫咪买了新玩具，它玩得超开心！",
+      "images": [
+        "https://example.com/posts/d2001_1.jpg"
+      ],
+      "tags": [
+        "日常",
+        "布偶猫"
+      ],
+      "petIds": [
+        "P5001"
+      ],
+      "pets": [
+        {
+          "id": "P5001",
+          "name": "橘子",
+          "type": "猫"
+        }
+      ],
+      "create_time": "2023-10-20T10:00:00Z",
+      "status": "pending"
+    },
+    {
+      "id": "D2002",
+      "userId": "U1002",
+      "title": "金毛的第一次海边旅行",
+      "content": "旺财第一次见到大海，兴奋地跑来跑去！",
+      "images": [
+        "https://example.com/posts/d2002_1.jpg"
+      ],
+      "tags": [
+        "旅行",
+        "金毛"
+      ],
+      "petIds": [
+        "P5002"
+      ],
+      "pets": [
+        {
+          "id": "P5002",
+          "name": "旺财",
+          "type": "狗"
+        }
+      ],
+      "create_time": "2023-10-21T14:30:00Z",
+      "status": "approved"
+    },
+    {
+      "id": "D2003",
+      "userId": "U1003",
+      "title": "雪球的梳毛日记",
+      "content": "每天梳毛一小时，波斯猫的日常护理真的很重要！",
+      "images": [
+        "https://example.com/posts/d2003_1.jpg"
+      ],
+      "tags": [
+        "护理",
+        "波斯猫"
+      ],
+      "petIds": [
+        "P5003"
+      ],
+      "pets": [
+        {
+          "id": "P5003",
+          "name": "雪球",
+          "type": "猫"
+        }
+      ],
+      "create_time": "2023-10-22T15:30:00Z",
+      "status": "approved"
+    }
+  ],
+  "helps": [
+    {
+      "id": "R3001",
+      "userId": "U1001",
+      "type": "寻宠",
+      "title": "紧急！橘猫在朝阳区走失",
+      "content": "名字：橘子，特征：脖子上有红色项圈",
+      "contact": "13812345678",
+      "images": [
+        "https://example.com/requests/r3001.jpg"
+      ],
+      "create_time": "2023-10-19T18:30:00Z",
+      "status": "pending"
+    },
+    {
+      "id": "R3002",
+      "userId": "U1002",
+      "type": "领养",
+      "title": "求领养一只小型犬",
+      "content": "希望领养性格温顺的小型犬，家中已有养宠经验",
+      "contact": "13987654321",
+      "images": [],
+      "create_time": "2023-10-22T10:15:00Z",
+      "status": "open"
+    },
+    {
+      "id": "R3003",
+      "userId": "U1003",
+      "type": "寻宠",
+      "title": "朝阳区走失波斯猫",
+      "content": "特征：蓝色眼睛，白色长毛",
+      "contact": "13800001111",
+      "images": [
+        "https://example.com/requests/r3003.jpg"
+      ],
+      "create_time": "2023-10-23T09:00:00Z",
+      "status": "open"
+    }
+  ],
+  "shops": [
+    {
+      "id": "S4001",
+      "name": "萌宠乐园",
+      "address": "北京市朝阳区XX路123号",
+      "phone": "010-87654321",
+      "services": [
+        "宠物美容",
+        "宠物用品"
+      ],
+      "rating": 4.8,
+      "opening_hours": "09:00-20:00"
+    },
+    {
+      "id": "S4002",
+      "name": "爱宠医院",
+      "address": "北京市海淀区YY路456号",
+      "phone": "010-12345678",
+      "services": [
+        "宠物医疗",
+        "疫苗注射"
+      ],
+      "rating": 4.9,
+      "opening_hours": "08:30-21:00"
+    },
+    {
+      "id": "S4003",
+      "name": "喵星人俱乐部",
+      "address": "上海市浦东新区ZZ路789号",
+      "phone": "021-98765432",
+      "services": [
+        "猫咪寄养",
+        "猫咖服务"
+      ],
+      "rating": 4.7,
+      "opening_hours": "10:00-22:00"
+    }
+  ]
+}
