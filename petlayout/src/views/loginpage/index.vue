@@ -69,8 +69,8 @@ const login = async () => {
     if (valid) {
       try {
         const res = await loginAPI(loginData);
-        if (!res) {
-          throw new Error('登录请求失败');
+        if (!res || !res.token) {
+          throw new Error('登录请求失败或者未生成token');
         }
         const { user, token } = res;
 
@@ -84,6 +84,7 @@ const login = async () => {
         }
 
         ElMessage.success('登录成功');
+        //首页会根据是否有token来判断是否登录，如果没有token，则跳转到登录页
 
         // 根据角色跳转
         if (user.role === 'admin') {
