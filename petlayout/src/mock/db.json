@@ -250,6 +250,17 @@
       "registration_time": "2025-03-27T10:40:46.943Z",
       "last_login": "2025-03-27T10:40:46.943Z",
       "pets": []
+    },
+    {
+      "id": "U38ecc5ff3d",
+      "username": "lilingang123",
+      "password": "12345678",
+      "role": "user",
+      "avatar": "@/assets/avatar.png",
+      "nickname": "lilingang123",
+      "registration_time": "2025-03-27T13:49:06.848Z",
+      "last_login": "2025-03-27T13:49:06.848Z",
+      "pets": []
     }
   ],
   "diary": [

@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue'
 //导入注册接口
 import { registerAPI, loginAPI } from '@/api/user'
 import { ElMessage } from 'element-plus'
+//导入路由和用户pinia
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user.js'
 const router = useRouter()
@@ -64,6 +65,7 @@ const rules = {
   ]
 }
 
+//处理登录请求
 const login = async () => {
   loginForm.value.validate(async (valid) => {
     if (valid) {
@@ -98,7 +100,7 @@ const login = async () => {
     }
   });
 }
-//注册服务
+//处理注册请求
 const register = async () => {
   registerForm.value.validate(async (valid) => {
     if (valid) {
@@ -178,9 +180,9 @@ const register = async () => {
       <el-footer class="footer-wrapped">
         <div class="footer-content">
           <div class="title">
+            <span>Yuzu-Soft</span> |
             <span>成都锦城学院</span> |
-            <span>成都锦城学院</span> |
-            <span>成都锦城学院</span> |
+            <span>Yuzu-Soft</span> |
             <span>成都锦城学院</span>
           </div>
         </div>

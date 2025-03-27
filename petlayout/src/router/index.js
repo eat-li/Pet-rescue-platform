@@ -45,6 +45,10 @@ router.beforeEach((to, from, next) => {
 
   // 设置文档标题
   document.title = title;
+  //如果没有token则跳转到登录页
+  // 未完成
+
+
 
   next();
 });
