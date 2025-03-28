@@ -1,6 +1,5 @@
 {
   "/api/users/:userId/pets": "/users/:userId/pets",
-  "/api/shops/nearby": "/shops?_sort=location.lat,location.lng",
   "/api/admin/users": "/users",
   "/api/admin/diaries": "/diaries?status=pending",
   "/api/admin/helps": "/helps?status=pending"

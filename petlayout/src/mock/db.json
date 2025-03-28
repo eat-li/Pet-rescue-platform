@@ -21,17 +21,7 @@
       "registration_time": "2023-10-05T14:30:00Z",
       "last_login": "2023-10-20T09:15:00Z",
       "pets": [
-        {
-          "id": "P5001",
-          "name": "橘子",
-          "type": "猫",
-          "breed": "橘猫",
-          "birthday": "2020-05-01",
-          "images": [
-            "https://example.com/pets/p5001_1.jpg"
-          ],
-          "description": "性格温顺，喜欢晒太阳"
-        }
+        "P5001"
       ]
     },
     {
@@ -39,22 +29,12 @@
       "username": "dog_master",
       "password": "dog123",
       "role": "user",
-      "avatar": "@/asserts/avatar.png/u1002.jpg",
+      "avatar": "@/assets/avatar.png",
       "nickname": "汪星人守护者",
       "registration_time": "2023-10-06T09:45:00Z",
       "last_login": "2023-10-21T16:20:00Z",
       "pets": [
-        {
-          "id": "P5002",
-          "name": "旺财",
-          "type": "狗",
-          "breed": "金毛",
-          "birthday": "2019-08-15",
-          "images": [
-            "https://example.com/pets/p5002_1.jpg"
-          ],
-          "description": "活泼好动，喜欢游泳"
-        }
+        "P5002"
       ]
     },
     {
@@ -62,22 +42,12 @@
       "username": "paws_mom",
       "password": "ilovedogs",
       "role": "user",
-      "avatar": "@/asserts/avatar.png/u1003.jpg",
+      "avatar": "@/assets/avatar.png",
       "nickname": "爪爪妈妈",
       "registration_time": "2023-10-07T11:20:00Z",
       "last_login": "2023-10-22T14:00:00Z",
       "pets": [
-        {
-          "id": "P5003",
-          "name": "雪球",
-          "type": "猫",
-          "breed": "波斯猫",
-          "birthday": "2021-02-14",
-          "images": [
-            "https://example.com/pets/p5003_1.jpg"
-          ],
-          "description": "长毛蓝眼，性格高傲"
-        }
+        "P5003"
       ]
     },
     {
@@ -90,17 +60,7 @@
       "registration_time": "2023-10-08T13:10:00Z",
       "last_login": "2023-10-23T11:30:00Z",
       "pets": [
-        {
-          "id": "P5004",
-          "name": "小蓝",
-          "type": "鸟",
-          "breed": "虎皮鹦鹉",
-          "birthday": "2022-03-10",
-          "images": [
-            "https://example.com/pets/p5004_1.jpg"
-          ],
-          "description": "喜欢唱歌，爱吃小米"
-        }
+        "P5004"
       ]
     },
     {
@@ -108,22 +68,12 @@
       "username": "fish_king",
       "password": "fish456",
       "role": "user",
-      "avatar": "@/asserts/avatar.png/u1005.jpg",
+      "avatar": "@/assets/avatar.png",
       "nickname": "鱼乐无穷",
       "registration_time": "2023-10-09T15:45:00Z",
       "last_login": "2023-10-24T10:20:00Z",
       "pets": [
-        {
-          "id": "P5005",
-          "name": "泡泡",
-          "type": "鱼",
-          "breed": "金鱼",
-          "birthday": "2023-01-20",
-          "images": [
-            "https://example.com/pets/p5005_1.jpg"
-          ],
-          "description": "红色金鱼，喜欢在水草中穿梭"
-        }
+        "P5005"
       ]
     },
     {
@@ -131,22 +81,12 @@
       "username": "hamster_fan",
       "password": "hamster789",
       "role": "user",
-      "avatar": "@/asserts/avatar.png/u1006.jpg",
+      "avatar": "@/assets/avatar.png",
       "nickname": "仓鼠控",
       "registration_time": "2023-10-10T12:30:00Z",
       "last_login": "2023-10-25T09:15:00Z",
       "pets": [
-        {
-          "id": "P5006",
-          "name": "球球",
-          "type": "仓鼠",
-          "breed": "金丝熊",
-          "birthday": "2023-04-15",
-          "images": [
-            "https://example.com/pets/p5006_1.jpg"
-          ],
-          "description": "爱囤食物，喜欢跑轮"
-        }
+        "P5006"
       ]
     },
     {
@@ -154,22 +94,12 @@
       "username": "reptile_man",
       "password": "reptile123",
       "role": "user",
-      "avatar": "@/asserts/avatar.png/u1007.jpg",
+      "avatar": "@/assets/avatar.png",
       "nickname": "爬行爱好者",
       "registration_time": "2023-10-11T16:20:00Z",
       "last_login": "2023-10-26T14:45:00Z",
       "pets": [
-        {
-          "id": "P5007",
-          "name": "小绿",
-          "type": "爬行动物",
-          "breed": "绿鬣蜥",
-          "birthday": "2021-11-30",
-          "images": [
-            "https://example.com/pets/p5007_1.jpg"
-          ],
-          "description": "需要温暖环境，喜欢吃蔬菜"
-        }
+        "P5007"
       ]
     },
     {
@@ -177,22 +107,12 @@
       "username": "bunny_lover",
       "password": "bunny456",
       "role": "user",
-      "avatar": "@/asserts/avatar.png/u1008.jpg",
+      "avatar": "@/assets/avatar.png",
       "nickname": "兔兔饲养员",
       "registration_time": "2023-10-12T10:15:00Z",
       "last_login": "2023-10-27T13:30:00Z",
       "pets": [
-        {
-          "id": "P5008",
-          "name": "小白",
-          "type": "兔",
-          "breed": "垂耳兔",
-          "birthday": "2022-07-22",
-          "images": [
-            "https://example.com/pets/p5008_1.jpg"
-          ],
-          "description": "性格温顺，爱吃胡萝卜"
-        }
+        "P5008"
       ]
     },
     {
@@ -200,7 +120,7 @@
       "username": "admin_pet",
       "password": "admin123",
       "role": "admin",
-      "avatar": "@/asserts/avatar.png/u1009.jpg",
+      "avatar": "@/assets/avatar.png",
       "nickname": "宠物管理员",
       "registration_time": "2023-10-01T09:00:00Z",
       "last_login": "2023-10-28T16:00:00Z",
@@ -211,33 +131,13 @@
       "username": "cat_whisperer",
       "password": "cat12345",
       "role": "user",
-      "avatar": "@/asserts/avatar.png/u1010.jpg",
+      "avatar": "@/assets/avatar.png",
       "nickname": "猫语者",
       "registration_time": "2023-10-13T14:50:00Z",
       "last_login": "2023-10-29T11:20:00Z",
       "pets": [
-        {
-          "id": "P5009",
-          "name": "小黑",
-          "type": "猫",
-          "breed": "黑猫",
-          "birthday": "2020-12-25",
-          "images": [
-            "https://example.com/pets/p5009_1.jpg"
-          ],
-          "description": "神秘优雅，喜欢夜间活动"
-        },
-        {
-          "id": "P5010",
-          "name": "小花",
-          "type": "猫",
-          "breed": "三花猫",
-          "birthday": "2021-06-18",
-          "images": [
-            "https://example.com/pets/p5010_1.jpg"
-          ],
-          "description": "活泼好动，喜欢追逐玩具"
-        }
+        "P5009",
+        "P5010"
       ]
     },
     {
@@ -245,10 +145,10 @@
       "username": "xinjieli",
       "password": "0721ciallo",
       "role": "user",
-      "avatar": "@/asserts/avatar.png/default.jpg",
+      "avatar": "@/assets/avatar.png",
       "nickname": "xinjieli",
-      "registration_time": "2025-03-27T10:40:46.943Z",
-      "last_login": "2025-03-27T10:40:46.943Z",
+      "registration_time": "2023-10-27T10:40:46.943Z",
+      "last_login": "2023-10-27T10:40:46.943Z",
       "pets": []
     },
     {
@@ -258,9 +158,131 @@
       "role": "user",
       "avatar": "@/assets/avatar.png",
       "nickname": "lilingang123",
-      "registration_time": "2025-03-27T13:49:06.848Z",
-      "last_login": "2025-03-27T13:49:06.848Z",
+      "registration_time": "2023-10-27T13:49:06.848Z",
+      "last_login": "2023-10-27T13:49:06.848Z",
       "pets": []
+    }
+  ],
+  "pets": [
+    {
+      "id": "P5001",
+      "name": "橘子",
+      "type": "猫",
+      "breed": "橘猫",
+      "ownerId": "U1001",
+      "birthday": "2020-05-01",
+      "images": [
+        "https://example.com/pets/p5001_1.jpg"
+      ],
+      "description": "性格温顺，喜欢晒太阳"
+    },
+    {
+      "id": "P5002",
+      "name": "旺财",
+      "type": "狗",
+      "breed": "金毛",
+      "ownerId": "U1002",
+      "birthday": "2019-08-15",
+      "images": [
+        "https://example.com/pets/p5002_1.jpg"
+      ],
+      "description": "活泼好动，喜欢游泳"
+    },
+    {
+      "id": "P5003",
+      "name": "雪球",
+      "type": "猫",
+      "breed": "波斯猫",
+      "ownerId": "U1003",
+      "birthday": "2021-02-14",
+      "images": [
+        "https://example.com/pets/p5003_1.jpg"
+      ],
+      "description": "长毛蓝眼，性格高傲"
+    },
+    {
+      "id": "P5004",
+      "name": "小蓝",
+      "type": "鸟",
+      "breed": "虎皮鹦鹉",
+      "ownerId": "U1004",
+      "birthday": "2022-03-10",
+      "images": [
+        "https://example.com/pets/p5004_1.jpg"
+      ],
+      "description": "喜欢唱歌，爱吃小米"
+    },
+    {
+      "id": "P5005",
+      "name": "泡泡",
+      "type": "鱼",
+      "breed": "金鱼",
+      "ownerId": "U1005",
+      "birthday": "2023-01-20",
+      "images": [
+        "https://example.com/pets/p5005_1.jpg"
+      ],
+      "description": "红色金鱼，喜欢在水草中穿梭"
+    },
+    {
+      "id": "P5006",
+      "name": "球球",
+      "type": "仓鼠",
+      "breed": "金丝熊",
+      "ownerId": "U1006",
+      "birthday": "2023-04-15",
+      "images": [
+        "https://example.com/pets/p5006_1.jpg"
+      ],
+      "description": "爱囤食物，喜欢跑轮"
+    },
+    {
+      "id": "P5007",
+      "name": "小绿",
+      "type": "爬行动物",
+      "breed": "绿鬣蜥",
+      "ownerId": "U1007",
+      "birthday": "2021-11-30",
+      "images": [
+        "https://example.com/pets/p5007_1.jpg"
+      ],
+      "description": "需要温暖环境，喜欢吃蔬菜"
+    },
+    {
+      "id": "P5008",
+      "name": "小白",
+      "type": "兔",
+      "breed": "垂耳兔",
+      "ownerId": "U1008",
+      "birthday": "2022-07-22",
+      "images": [
+        "https://example.com/pets/p5008_1.jpg"
+      ],
+      "description": "性格温顺，爱吃胡萝卜"
+    },
+    {
+      "id": "P5009",
+      "name": "小黑",
+      "type": "猫",
+      "breed": "黑猫",
+      "ownerId": "U1010",
+      "birthday": "2020-12-25",
+      "images": [
+        "https://example.com/pets/p5009_1.jpg"
+      ],
+      "description": "神秘优雅，喜欢夜间活动"
+    },
+    {
+      "id": "P5010",
+      "name": "小花",
+      "type": "猫",
+      "breed": "三花猫",
+      "ownerId": "U1010",
+      "birthday": "2021-06-18",
+      "images": [
+        "https://example.com/pets/p5010_1.jpg"
+      ],
+      "description": "活泼好动，喜欢追逐玩具"
     }
   ],
   "diary": [
@@ -278,13 +300,6 @@
       ],
       "petIds": [
         "P5001"
-      ],
-      "pets": [
-        {
-          "id": "P5001",
-          "name": "橘子",
-          "type": "猫"
-        }
       ],
       "create_time": "2023-10-20T10:00:00Z",
       "status": "pending"
@@ -304,13 +319,6 @@
       "petIds": [
         "P5002"
       ],
-      "pets": [
-        {
-          "id": "P5002",
-          "name": "旺财",
-          "type": "狗"
-        }
-      ],
       "create_time": "2023-10-21T14:30:00Z",
       "status": "approved"
     },
@@ -329,13 +337,6 @@
       "petIds": [
         "P5003"
       ],
-      "pets": [
-        {
-          "id": "P5003",
-          "name": "雪球",
-          "type": "猫"
-        }
-      ],
       "create_time": "2023-10-22T15:30:00Z",
       "status": "approved"
     },
@@ -343,7 +344,7 @@
       "id": "D2004",
       "userId": "U1004",
       "title": "小蓝学说话",
-      "content": "今天教鹦鹉说'你好'，它居然真的模仿出来了！",
+      "content": "今天教鹦鹉说'你好'，它居然真的模价出来了！",
       "images": [
         "https://example.com/posts/d2004_1.jpg"
       ],
@@ -353,13 +354,6 @@
       ],
       "petIds": [
         "P5004"
-      ],
-      "pets": [
-        {
-          "id": "P5004",
-          "name": "小蓝",
-          "type": "鸟"
-        }
       ],
       "create_time": "2023-10-23T12:15:00Z",
       "status": "approved"
@@ -379,13 +373,6 @@
       "petIds": [
         "P5005"
       ],
-      "pets": [
-        {
-          "id": "P5005",
-          "name": "泡泡",
-          "type": "鱼"
-        }
-      ],
       "create_time": "2023-10-24T11:20:00Z",
       "status": "approved"
     },
@@ -403,13 +390,6 @@
       ],
       "petIds": [
         "P5006"
-      ],
-      "pets": [
-        {
-          "id": "P5006",
-          "name": "球球",
-          "type": "仓鼠"
-        }
       ],
       "create_time": "2023-10-25T10:30:00Z",
       "status": "pending"
@@ -429,13 +409,6 @@
       "petIds": [
         "P5007"
       ],
-      "pets": [
-        {
-          "id": "P5007",
-          "name": "小绿",
-          "type": "爬行动物"
-        }
-      ],
       "create_time": "2023-10-26T15:45:00Z",
       "status": "approved"
     },
@@ -453,13 +426,6 @@
       ],
       "petIds": [
         "P5008"
-      ],
-      "pets": [
-        {
-          "id": "P5008",
-          "name": "小白",
-          "type": "兔"
-        }
       ],
       "create_time": "2023-10-27T14:20:00Z",
       "status": "approved"
@@ -481,45 +447,8 @@
         "P5009",
         "P5010"
       ],
-      "pets": [
-        {
-          "id": "P5009",
-          "name": "小黑",
-          "type": "猫"
-        },
-        {
-          "id": "P5010",
-          "name": "小花",
-          "type": "猫"
-        }
-      ],
       "create_time": "2023-10-28T13:10:00Z",
       "status": "pending"
-    },
-    {
-      "id": "D2010",
-      "userId": "U1002",
-      "title": "金毛的游泳课",
-      "content": "今天带旺财去宠物泳池，它游得越来越好了！",
-      "images": [
-        "https://example.com/posts/d2010_1.jpg"
-      ],
-      "tags": [
-        "游泳",
-        "训练"
-      ],
-      "petIds": [
-        "P5002"
-      ],
-      "pets": [
-        {
-          "id": "P5002",
-          "name": "旺财",
-          "type": "狗"
-        }
-      ],
-      "create_time": "2023-10-29T16:30:00Z",
-      "status": "approved"
     }
   ],
   "helps": [
@@ -528,6 +457,7 @@
       "userId": "U1001",
       "type": "寻宠",
       "title": "紧急！橘猫在朝阳区走失",
+      "location": "北京市朝阳区",
       "content": "名字：橘子，特征：脖子上有红色项圈",
       "contact": "13812345678",
       "images": [
@@ -541,6 +471,7 @@
       "userId": "U1002",
       "type": "领养",
       "title": "求领养一只小型犬",
+      "location": "北京市朝阳区",
       "content": "希望领养性格温顺的小型犬，家中已有养宠经验",
       "contact": "13987654321",
       "images": [],
@@ -552,222 +483,14 @@
       "userId": "U1003",
       "type": "寻宠",
       "title": "朝阳区走失波斯猫",
+      "location": "北京市朝阳区",
       "content": "特征：蓝色眼睛，白色长毛",
       "contact": "13800001111",
       "images": [
         "https://example.com/requests/r3003.jpg"
       ],
       "create_time": "2023-10-23T09:00:00Z",
-      "status": "open"
-    },
-    {
-      "id": "R3004",
-      "userId": "U1004",
-      "type": "寻宠",
-      "title": "虎皮鹦鹉从窗户飞走",
-      "content": "名字：小蓝，特征：蓝色羽毛，会说'你好'",
-      "contact": "13711112222",
-      "images": [
-        "https://example.com/requests/r3004.jpg"
-      ],
-      "create_time": "2023-10-24T08:45:00Z",
-      "status": "open"
-    },
-    {
-      "id": "R3005",
-      "userId": "U1005",
-      "type": "求助",
-      "title": "金鱼生病求助",
-      "content": "泡泡最近不爱游动，鱼鳍有点发白，求推荐靠谱鱼医",
-      "contact": "13622223333",
-      "images": [
-        "https://example.com/requests/r3005.jpg"
-      ],
-      "create_time": "2023-10-25T14:20:00Z",
-      "status": "open"
-    },
-    {
-      "id": "R3006",
-      "userId": "U1006",
-      "type": "领养",
-      "title": "求领养一只仓鼠",
-      "content": "想给孩子养只仓鼠作伴，希望性格温顺",
-      "contact": "13533334444",
-      "images": [],
-      "create_time": "2023-10-26T11:30:00Z",
-      "status": "open"
-    },
-    {
-      "id": "R3007",
-      "userId": "U1007",
-      "type": "求助",
-      "title": "绿鬣蜥不吃东西",
-      "content": "小绿三天没吃蔬菜了，温度湿度都正常，求建议",
-      "contact": "13444445555",
-      "images": [
-        "https://example.com/requests/r3007.jpg"
-      ],
-      "create_time": "2023-10-27T16:15:00Z",
-      "status": "open"
-    },
-    {
-      "id": "R3008",
-      "userId": "U1008",
-      "type": "寻宠",
-      "title": "垂耳兔在海淀区走失",
-      "content": "名字：小白，特征：白色长毛，垂耳",
-      "contact": "13355556666",
-      "images": [
-        "https://example.com/requests/r3008.jpg"
-      ],
-      "create_time": "2023-10-28T09:40:00Z",
       "status": "pending"
-    },
-    {
-      "id": "R3009",
-      "userId": "U1010",
-      "type": "领养",
-      "title": "寻找爱心人士领养三花猫",
-      "content": "小花生的小猫两个月大了，寻找负责任的主人",
-      "contact": "13266667777",
-      "images": [
-        "https://example.com/requests/r3009.jpg"
-      ],
-      "create_time": "2023-10-29T13:25:00Z",
-      "status": "open"
-    },
-    {
-      "id": "R3010",
-      "userId": "U1009",
-      "type": "其他",
-      "title": "宠物医院推荐",
-      "content": "请问朝阳区哪家宠物医院看猫比较好？",
-      "contact": "13177778888",
-      "images": [],
-      "create_time": "2023-10-30T10:10:00Z",
-      "status": "open"
-    }
-  ],
-  "shops": [
-    {
-      "id": "S4001",
-      "name": "萌宠乐园",
-      "address": "北京市朝阳区XX路123号",
-      "phone": "010-87654321",
-      "services": [
-        "宠物美容",
-        "宠物用品"
-      ],
-      "rating": 4.8,
-      "opening_hours": "09:00-20:00"
-    },
-    {
-      "id": "S4002",
-      "name": "爱宠医院",
-      "address": "北京市海淀区YY路456号",
-      "phone": "010-12345678",
-      "services": [
-        "宠物医疗",
-        "疫苗注射"
-      ],
-      "rating": 4.9,
-      "opening_hours": "08:30-21:00"
-    },
-    {
-      "id": "S4003",
-      "name": "喵星人俱乐部",
-      "address": "上海市浦东新区ZZ路789号",
-      "phone": "021-98765432",
-      "services": [
-        "猫咪寄养",
-        "猫咖服务"
-      ],
-      "rating": 4.7,
-      "opening_hours": "10:00-22:00"
-    },
-    {
-      "id": "S4004",
-      "name": "汪星人训练中心",
-      "address": "广州市天河区AA路101号",
-      "phone": "020-11223344",
-      "services": [
-        "狗狗训练",
-        "行为矫正"
-      ],
-      "rating": 4.6,
-      "opening_hours": "08:00-19:00"
-    },
-    {
-      "id": "S4005",
-      "name": "水族世界",
-      "address": "深圳市南山区BB路202号",
-      "phone": "0755-22334455",
-      "services": [
-        "观赏鱼销售",
-        "鱼缸维护"
-      ],
-      "rating": 4.5,
-      "opening_hours": "10:30-21:30"
-    },
-    {
-      "id": "S4006",
-      "name": "小宠之家",
-      "address": "成都市武侯区CC路303号",
-      "phone": "028-33445566",
-      "services": [
-        "仓鼠用品",
-        "兔子护理"
-      ],
-      "rating": 4.7,
-      "opening_hours": "09:30-20:30"
-    },
-    {
-      "id": "S4007",
-      "name": "爬宠天地",
-      "address": "南京市鼓楼区DD路404号",
-      "phone": "025-44556677",
-      "services": [
-        "爬宠饲养",
-        "专业咨询"
-      ],
-      "rating": 4.8,
-      "opening_hours": "10:00-19:00"
-    },
-    {
-      "id": "S4008",
-      "name": "宠物天堂",
-      "address": "杭州市西湖区EE路505号",
-      "phone": "0571-55667788",
-      "services": [
-        "宠物殡葬",
-        "纪念品制作"
-      ],
-      "rating": 4.9,
-      "opening_hours": "09:00-18:00"
-    },
-    {
-      "id": "S4009",
-      "name": "鸟语花香",
-      "address": "武汉市洪山区FF路606号",
-      "phone": "027-66778899",
-      "services": [
-        "鸟类用品",
-        "鸟粮定制"
-      ],
-      "rating": 4.6,
-      "opening_hours": "09:00-20:00"
-    },
-    {
-      "id": "S4010",
-      "name": "宠物大本营",
-      "address": "西安市雁塔区GG路707号",
-      "phone": "029-77889900",
-      "services": [
-        "宠物寄养",
-        "宠物摄影"
-      ],
-      "rating": 4.7,
-      "opening_hours": "08:30-21:30"
     }
   ]
 }
