@@ -26,3 +26,6 @@ pinia做了持久化存储用户信息和token,在登录页登录成功后，会
 做了一个简单的登录和注册功能，使用的是elementplus,在views/loginpage/index.vue
 7. 登录注册验证
 做了一个登录和注册的服务api/user.js
+
+
+给组员讲解
