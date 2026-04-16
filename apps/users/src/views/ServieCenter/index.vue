@@ -126,7 +126,7 @@ onMounted(() => fetchList(1))
             </button>
           </div>
         </div>
-        <button class="cart-entry" @click="router.push('/cart')">
+        <button class="cart-entry" @click="router.push('/profile/cart')">
           🛒 购物车
         </button>
       </div>

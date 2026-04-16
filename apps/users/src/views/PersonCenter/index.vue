@@ -16,6 +16,11 @@ const menuList = ref([
     type: 'cart'
   },
   {
+    title: '我的订单',
+    icon: '📋',
+    type: 'myOrders'
+  },
+  {
     title: '我的领养',
     icon: '🐾',
     type: 'myAdoptions'

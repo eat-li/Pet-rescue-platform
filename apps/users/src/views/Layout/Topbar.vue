@@ -192,10 +192,7 @@ const goMyPets = () => {
         <li><router-link to="/service"
             class="text-gray-900 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300">宠物服务</router-link>
         </li>
-        <li><a
-            class="text-gray-900 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"
-            @click="scrollToQuestion">常见问题</a>
-        </li>
+       
 
       </ul>
     </div>

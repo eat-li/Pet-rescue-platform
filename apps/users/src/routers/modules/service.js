@@ -10,12 +10,6 @@ const serviceRoutes = [
     name: 'serviceDetail',
     component: () => import('../../views/ServieCenter/Services/Detail.vue'),
     meta: { title: '服务详情' }
-  },
-  {
-    path: '/cart',
-    name: 'cart',
-    component: () => import('../../views/ServieCenter/Cart.vue'),
-    meta: { title: '购物车' }
   }
 ]
 

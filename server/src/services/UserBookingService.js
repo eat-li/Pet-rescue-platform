@@ -55,6 +55,84 @@ exports.CreateBookingService = async (req, res) => {
   }
 }
 
+// 批量创建预约（从购物车）
+exports.BatchCreateBookingService = async (req, res) => {
+  try {
+    const userId = req.userId
+    const { serviceIds, appointmentDate, appointmentTime, petName, petWeight, contact, notes } = req.body
+
+    // 验证必填字段
+    if (!serviceIds || !Array.isArray(serviceIds) || serviceIds.length === 0) {
+      return res.status(400).json({
+        code: 400,
+        message: '请选择要预约的服务'
+      })
+    }
+    if (!appointmentDate || !appointmentTime || !petName || !petWeight || !contact) {
+      return res.status(400).json({
+        code: 400,
+        message: '缺少必填字段：预约日期、时间、宠物名称、体重、联系方式'
+      })
+    }
+
+    // 验证所有服务是否存在且上架
+    const services = await PetServiceOrder.findAll({
+      where: {
+        id: { [Op.in]: serviceIds },
+        status: true
+      }
+    })
+
+    if (services.length !== serviceIds.length) {
+      return res.status(400).json({
+        code: 400,
+        message: '部分服务不存在或已下架，请刷新后重试'
+      })
+    }
+
+    // 批量创建预约
+    const bookings = await Promise.all(
+      services.map(service =>
+        ServiceBooking.create({
+          userId,
+          serviceId: service.id,
+          appointmentDate,
+          appointmentTime,
+          petName,
+          petWeight,
+          contact,
+          total_price: service.price,
+          notes,
+          status: 'pending'
+        })
+      )
+    )
+
+    // 删除购物车中已预约的项
+    await CartItem.destroy({
+      where: {
+        userId,
+        serviceId: { [Op.in]: serviceIds }
+      }
+    })
+
+    return res.status(201).json({
+      code: 201,
+      message: `成功预约 ${bookings.length} 项服务`,
+      data: {
+        bookings,
+        count: bookings.length
+      }
+    })
+  } catch (error) {
+    console.error('批量创建预约失败:', error)
+    return res.status(500).json({
+      code: 500,
+      message: '服务器错误，批量预约失败'
+    })
+  }
+}
+
 // 获取用户预约列表
 exports.GetUserBookingsService = async (req, res) => {
   try {
@@ -244,7 +322,7 @@ exports.GetCartListService = async (req, res) => {
         {
           model: PetServiceOrder,
           as: 'service',
-          attributes: ['id', 'name', 'type', 'price', 'image', 'weight']
+          attributes: ['id', 'name', 'type', 'price', 'image', 'weight', 'status', 'content']
         }
       ],
       order: [['createdAt', 'DESC']]

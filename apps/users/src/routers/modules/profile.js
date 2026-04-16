@@ -30,6 +30,13 @@ const profileRoutes = [
         meta: {
           title: "我的领养"
         }
+      }, {
+        path: 'my-orders',
+        name: 'myOrders',
+        component: () => import("../../views/PersonCenter/Person/MyOrders.vue"),
+        meta: {
+          title: "我的订单"
+        }
       }
     ] //子路由
   },

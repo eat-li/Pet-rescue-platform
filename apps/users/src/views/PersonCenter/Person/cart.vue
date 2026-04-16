@@ -2,10 +2,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  getCartAPI,
+  getCartListAPI,
   updateCartItemAPI,
-  removeCartItemAPI,
-  clearCartAPI
+  deleteCartItemAPI,
+  batchDeleteCartAPI,
+  batchCreateBookingAPI
 } from '@/api/service'
 
 const router = useRouter()
@@ -27,20 +28,29 @@ const typeMap = {
 const getTypeInfo = (type) =>
   typeMap[type] || { label: type, icon: '🐾', color: '#6b7280', bg: '#f9fafb' }
 
+// 商品是否上架（兑容 boolean true / 数字 1 / 字符串 "true"/"1"）
+const isActive = (service) => {
+  if (!service) return false
+  const s = service.status
+  return s === true || s === 1 || s === '1' || s === 'true'
+}
+
 // 已选中条目
-const selectedItems = computed(() => cartItems.value.filter(i => i.selected && i.service?.status))
+const selectedItems = computed(() => cartItems.value.filter(i => i.selected && isActive(i.service)))
 const selectedCount = computed(() => selectedItems.value.length)
 
 // ── 拉取购物车 ────────────────────────────────────────────
 const fetchCart = async () => {
   try {
     loading.value = true
-    const res = await getCartAPI()
-    const data = res?.data?.data
-    if (data) {
-      cartItems.value = data.items || []
-      selectedTotal.value = data.selectedTotal || '0.00'
-    }
+    const res = await getCartListAPI()
+    const items = res?.data?.data || []
+    // 保留已有的选中状态，新条目默认全选
+    cartItems.value = items.map(i => ({
+      ...i,
+      selected: i.selected !== undefined ? i.selected : true
+    }))
+    recalcTotal()
   } catch (err) {
     console.error('获取购物车失败:', err)
   } finally {
@@ -79,7 +89,7 @@ const toggleAll = async () => {
 // 重新计算本地总价
 const recalcTotal = () => {
   const total = cartItems.value
-    .filter(i => i.selected && i.service?.status)
+    .filter(i => i.selected && isActive(i.service))
     .reduce((sum, i) => sum + parseFloat(i.service?.price || 0), 0)
   selectedTotal.value = total.toFixed(2)
 }
@@ -90,7 +100,7 @@ const handleRemove = async (item) => {
   if (removing.value === item.id) return
   removing.value = item.id
   try {
-    await removeCartItemAPI(item.id)
+    await deleteCartItemAPI(item.id)
     cartItems.value = cartItems.value.filter(i => i.id !== item.id)
     recalcTotal()
   } catch {
@@ -106,7 +116,8 @@ const clearing = ref(false)
 const handleClear = async () => {
   try {
     clearing.value = true
-    await clearCartAPI()
+    const allIds = cartItems.value.map(i => i.id)
+    await batchDeleteCartAPI(allIds)
     cartItems.value = []
     selectedTotal.value = '0.00'
     showClearConfirm.value = false
@@ -114,6 +125,79 @@ const handleClear = async () => {
     alert('清空失败，请重试')
   } finally {
     clearing.value = false
+  }
+}
+
+// ── 批量预约弹窗 ──────────────────────────────────────────
+const showBookingModal = ref(false)
+const bookingLoading = ref(false)
+const bookingForm = ref({
+  appointmentDate: '',
+  appointmentTime: '',
+  petName: '',
+  petWeight: '',
+  contact: '',
+  notes: ''
+})
+
+// 打开预约弹窗
+const openBookingModal = () => {
+  if (selectedCount.value === 0) return
+  // 默认预约日期为明天
+  const tomorrow = new Date()
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  bookingForm.value.appointmentDate = tomorrow.toISOString().split('T')[0]
+  bookingForm.value.appointmentTime = '10:00'
+  showBookingModal.value = true
+}
+
+// 关闭预约弹窗
+const closeBookingModal = () => {
+  if (bookingLoading.value) return
+  showBookingModal.value = false
+  bookingForm.value = {
+    appointmentDate: '',
+    appointmentTime: '',
+    petName: '',
+    petWeight: '',
+    contact: '',
+    notes: ''
+  }
+}
+
+// 提交批量预约
+const submitBooking = async () => {
+  const { appointmentDate, appointmentTime, petName, petWeight, contact } = bookingForm.value
+  if (!appointmentDate || !appointmentTime || !petName || !petWeight || !contact) {
+    alert('请填写完整的预约信息')
+    return
+  }
+
+  const serviceIds = selectedItems.value.map(i => i.serviceId)
+  if (serviceIds.length === 0) {
+    alert('请选择要预约的服务')
+    return
+  }
+
+  try {
+    bookingLoading.value = true
+    await batchCreateBookingAPI({
+      serviceIds,
+      appointmentDate,
+      appointmentTime,
+      petName,
+      petWeight: parseFloat(petWeight),
+      contact,
+      notes: bookingForm.value.notes
+    })
+    alert(`成功预约 ${serviceIds.length} 项服务！`)
+    showBookingModal.value = false
+    // 刷新购物车（已预约的会被删除）
+    await fetchCart()
+  } catch (err) {
+    alert(err.response?.data?.message || '预约失败，请重试')
+  } finally {
+    bookingLoading.value = false
   }
 }
 
@@ -180,12 +264,12 @@ onMounted(fetchCart)
         <div
           v-for="item in cartItems"
           :key="item.id"
-          :class="['cart-item', { 'item-disabled': !item.service?.status }]"
+          :class="['cart-item', { 'item-disabled': !isActive(item.service) }]"
         >
           <!-- 选择框 -->
           <div class="item-check" @click="toggleSelect(item)">
-            <div :class="['custom-checkbox', { checked: item.selected && item.service?.status }]">
-              <svg v-if="item.selected && item.service?.status" viewBox="0 0 12 10" fill="none">
+            <div :class="['custom-checkbox', { checked: item.selected && isActive(item.service) }]">
+              <svg v-if="item.selected && isActive(item.service)" viewBox="0 0 12 10" fill="none">
                 <path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
@@ -205,7 +289,7 @@ onMounted(fetchCart)
                 {{ getTypeInfo(item.service?.type).icon }}
                 {{ getTypeInfo(item.service?.type).label }}
               </span>
-              <span v-if="!item.service?.status" class="offline-tag">已下架</span>
+              <span v-if="!isActive(item.service)" class="offline-tag">已下架</span>
             </div>
             <h4 class="item-name">{{ item.service?.name || '未知服务' }}</h4>
             <p class="item-desc">{{ item.service?.content }}</p>
@@ -227,7 +311,7 @@ onMounted(fetchCart)
             <div class="item-actions">
               <button
                 class="book-btn"
-                :disabled="!item.service?.status"
+                :disabled="!isActive(item.service)"
                 @click="handleBookItem(item)"
               >
                 去预约
@@ -255,7 +339,7 @@ onMounted(fetchCart)
         <button
           class="checkout-btn"
           :disabled="selectedCount === 0"
-          @click="router.push('/service')"
+          @click="openBookingModal"
         >
           {{ selectedCount === 0 ? '请先选择服务' : `去预约 (${selectedCount})` }}
         </button>
@@ -276,6 +360,87 @@ onMounted(fetchCart)
         </div>
       </div>
     </div>
+
+    <!-- 批量预约弹窗 -->
+    <Teleport to="body">
+      <div v-if="showBookingModal" class="cart-modal-mask" @click.self="closeBookingModal">
+        <div class="cart-modal-box booking-modal-box">
+          <div class="modal-header">
+            <h3 class="modal-title">📅 批量预约服务</h3>
+            <button class="modal-close" @click="closeBookingModal">×</button>
+          </div>
+          
+          <div class="booking-summary">
+            <p class="summary-text">已选 <strong>{{ selectedCount }}</strong> 项服务，合计 <span class="summary-price">¥{{ selectedTotal }}</span></p>
+          </div>
+
+          <div class="booking-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>预约日期 <span class="required">*</span></label>
+                <input 
+                  v-model="bookingForm.appointmentDate" 
+                  type="date" 
+                  class="form-input"
+                  :min="new Date().toISOString().split('T')[0]"
+                />
+              </div>
+              <div class="form-group">
+                <label>预约时间 <span class="required">*</span></label>
+                <select v-model="bookingForm.appointmentTime" class="form-input">
+                  <option value="09:00">09:00</option>
+                  <option value="10:00">10:00</option>
+                  <option value="11:00">11:00</option>
+                  <option value="14:00">14:00</option>
+                  <option value="15:00">15:00</option>
+                  <option value="16:00">16:00</option>
+                  <option value="17:00">17:00</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>宠物名称 <span class="required">*</span></label>
+                <input v-model="bookingForm.petName" type="text" class="form-input" placeholder="请输入宠物名称" />
+              </div>
+              <div class="form-group">
+                <label>宠物体重(kg) <span class="required">*</span></label>
+                <input 
+                  v-model="bookingForm.petWeight" 
+                  type="number" 
+                  step="0.1" 
+                  class="form-input" 
+                  placeholder="如：5.5"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>联系方式 <span class="required">*</span></label>
+              <input v-model="bookingForm.contact" type="text" class="form-input" placeholder="手机号或微信号" />
+            </div>
+
+            <div class="form-group">
+              <label>备注</label>
+              <textarea 
+                v-model="bookingForm.notes" 
+                class="form-textarea" 
+                rows="2" 
+                placeholder="其他需求或注意事项（选填）"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button class="modal-cancel" @click="closeBookingModal">取消</button>
+            <button class="modal-confirm booking-submit" :disabled="bookingLoading" @click="submitBooking">
+              {{ bookingLoading ? '预约中...' : `确认预约 (${selectedCount})` }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -676,5 +841,125 @@ onMounted(fetchCart)
   cursor: pointer;
   &:hover:not(:disabled) { background: #dc2626; }
   &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+// ── 批量预约弹窗样式 ──────────────────────────────────────
+.cart-modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  backdrop-filter: blur(4px);
+}
+
+.cart-modal-box {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  width: 420px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover { background: #e5e7eb; color: #374151; }
+}
+
+.booking-summary {
+  background: linear-gradient(135deg, #f5f3ff, #eff6ff);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.summary-text {
+  margin: 0;
+  font-size: 14px;
+  color: #4b5563;
+  strong { color: #8b5cf6; font-size: 16px; }
+}
+
+.summary-price {
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+  }
+}
+
+.required {
+  color: #ef4444;
+}
+
+.form-input, .form-textarea {
+  padding: 10px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  background: white;
+  transition: all 0.2s;
+  &:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  }
+}
+
+.form-textarea {
+  resize: none;
+  font-family: inherit;
+}
+
+.booking-submit {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+  }
 }
 </style>

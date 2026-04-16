@@ -17,6 +17,11 @@ export const createBookingAPI = (data) => {
   return request.post('/api/user/booking', data)
 }
 
+// 批量创建预约（从购物车）
+export const batchCreateBookingAPI = (data) => {
+  return request.post('/api/user/bookings/batch', data)
+}
+
 // 获取用户预约列表
 export const getUserBookingsAPI = (params = {}) => {
   return request.get('/api/user/bookings', { params })

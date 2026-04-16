@@ -106,6 +106,7 @@ const statusClass = (val) => {
     <div class="hero-banner">
       <div class="hero-content">
         <div class="hero-text">
+          <button class="home-btn" @click="router.push('/')">← 返回首页</button>
           <h1>🐾 宠物领养中心</h1>
           <p>给每一个毛孩子找到温暖的家，用爱守护每一条生命</p>
           <div v-if="!loading" class="hero-stats">
@@ -225,6 +226,26 @@ const statusClass = (val) => {
   gap: 32px;
 
   @media (max-width: 768px) { flex-direction: column; text-align: center; }
+}
+
+.home-btn {
+  display: inline-block;
+  margin-bottom: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(4px);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.28);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.55);
+  }
 }
 
 .hero-text {

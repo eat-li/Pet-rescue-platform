@@ -1,11 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   getMyApplicationsAPI,
   getMyAdoptionsAPI,
   getAdoptionApplicationsAPI,
-  updateApplicationStatusAPI
+  updateApplicationStatusAPI,
+  getAdoptionDetailAPI
 } from '../../../api/adoption'
 import Toast from '../../../components/Common/Toast.vue'
 import { useToast } from '../../../hooks/Common/useToast.js'
@@ -31,6 +32,20 @@ const loadingAdoptions = ref(false)
 const postApplications = ref({})
 const expandedPosts = ref(new Set())
 const loadingPost = ref({})
+
+// ── 详情弹窗状态 ──────────────────────────────────────────
+const showDetailModal = ref(false)
+const detailData = ref(null)
+const detailLoading = ref(false)
+
+// 待处理申请总数（用于 Tab 角标）
+const pendingCount = computed(() => {
+  let count = 0
+  for (const list of Object.values(postApplications.value)) {
+    count += list.filter(a => a.status === 'pending').length
+  }
+  return count
+})
 
 // ── 常量映射 ──────────────────────────────────────────────
 const experienceMap = {
@@ -81,6 +96,16 @@ const fetchMyAdoptions = async () => {
   loadingAdoptions.value = true
   try {
     myAdoptions.value = await getMyAdoptionsAPI()
+    // 自动加载所有帖子的申请列表，为角标和实时显示提供数据
+    await Promise.all(
+      myAdoptions.value.map(async (adoption) => {
+        try {
+          postApplications.value[adoption.id] = await getAdoptionApplicationsAPI(adoption.id)
+        } catch (e) {
+          // 忽略单个加载失败
+        }
+      })
+    )
   } catch (err) {
     showError(err.message || '获取发布列表失败')
   } finally {
@@ -127,6 +152,39 @@ const handleReview = async (appId, status, adoptionId) => {
   }
 }
 
+// ── 打开详情弹窗 ──────────────────────────────────────────
+const viewDetail = async (adoptionId) => {
+  detailData.value = null
+  detailLoading.value = true
+  showDetailModal.value = true
+  try {
+    detailData.value = await getAdoptionDetailAPI(adoptionId)
+  } catch (err) {
+    showError(err.message || '获取详情失败')
+    showDetailModal.value = false
+  } finally {
+    detailLoading.value = false
+  }
+}
+
+// 关闭详情弹窗
+const closeDetailModal = () => {
+  showDetailModal.value = false
+  detailData.value = null
+}
+
+// 宠物年龄计算
+const calcPetAge = (birthday) => {
+  if (!birthday) return '未知'
+  const birth = new Date(birthday)
+  const now = new Date()
+  const ms = now - birth
+  const years = Math.floor(ms / (1000 * 60 * 60 * 24 * 365))
+  const months = Math.floor((ms % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30))
+  if (years > 0) return `${years}岁${months > 0 ? months + '个月' : ''}`
+  return months > 0 ? `${months}个月` : '不足1个月'
+}
+
 // ── Tab 切换 ──────────────────────────────────────────────
 const switchTab = (tab) => {
   activeTab.value = tab
@@ -138,7 +196,10 @@ const switchTab = (tab) => {
   }
 }
 
-onMounted(() => fetchMyApplications())
+onMounted(() => {
+  fetchMyApplications()
+  fetchMyAdoptions() // 同时加载帖子和申请以显示角标
+})
 </script>
 
 <template>
@@ -158,6 +219,7 @@ onMounted(() => fetchMyApplications())
         @click="switchTab('my-posts')"
       >
         🐾 我的发布
+        <span v-if="pendingCount > 0" class="pending-badge">{{ pendingCount }}</span>
       </button>
     </div>
 
@@ -166,7 +228,7 @@ onMounted(() => fetchMyApplications())
       <div v-if="loadingApplications" class="empty-hint">加载中...</div>
       <div v-else-if="myApplications.length === 0" class="empty-hint">
         <span>暂无领养申请记录</span>
-        <button class="goto-btn" @click="router.push('/adoption')">去看看宠物 →</button>
+        <button class="goto-btn" @click="router.push('/adopt')">去看看宠物 →</button>
       </div>
       <div v-else class="card-list">
         <div v-for="app in myApplications" :key="app.id" class="app-card">
@@ -199,7 +261,7 @@ onMounted(() => fetchMyApplications())
               </span>
             </div>
           </div>
-          <button class="view-btn" @click="router.push(`/adoption/${app.adoptionId}`)">查看详情</button>
+          <button class="view-btn" @click="viewDetail(app.adoptionId)">查看详情</button>
         </div>
       </div>
     </div>
@@ -209,7 +271,7 @@ onMounted(() => fetchMyApplications())
       <div v-if="loadingAdoptions" class="empty-hint">加载中...</div>
       <div v-else-if="myAdoptions.length === 0" class="empty-hint">
         <span>暂无发布记录</span>
-        <button class="goto-btn" @click="router.push('/adoption/create')">去发布 →</button>
+        <button class="goto-btn" @click="router.push('/adopt/create')">去发布 →</button>
       </div>
       <div v-else class="card-list">
         <div v-for="adoption in myAdoptions" :key="adoption.id" class="post-card">
@@ -303,6 +365,113 @@ onMounted(() => fetchMyApplications())
     :duration="duration"
     @hide-toast="hideToast"
   />
+
+  <!-- 领养详情弹窗 -->
+  <Teleport to="body">
+    <div v-if="showDetailModal" class="adopt-detail-overlay" @click.self="closeDetailModal">
+      <div class="adopt-detail-box">
+        <!-- 弹窗头部 -->
+        <div class="adopt-detail-header">
+          <h3>领养详情</h3>
+          <button class="adopt-detail-close" @click="closeDetailModal">✕</button>
+        </div>
+
+        <!-- 加载中 -->
+        <div v-if="detailLoading" class="adopt-detail-loading">
+          <span>加载中...</span>
+        </div>
+
+        <!-- 详情内容 -->
+        <div v-else-if="detailData" class="adopt-detail-content">
+          <!-- 宠物图片 -->
+          <div class="adopt-detail-img-wrap">
+            <img
+              class="adopt-detail-img"
+              :src="getImageUrl(detailData.pet?.image)"
+              :alt="detailData.pet?.nickName"
+            />
+            <span
+              class="adopt-detail-status"
+              :style="{ color: adoptionStatusMap[detailData.status]?.color, background: adoptionStatusMap[detailData.status]?.bg }"
+            >
+              {{ adoptionStatusMap[detailData.status]?.label || detailData.status }}
+            </span>
+          </div>
+
+          <!-- 宠物基本信息 -->
+          <div class="adopt-detail-section">
+            <h4 class="adopt-detail-section-title">🐾 宠物信息</h4>
+            <div class="adopt-detail-grid">
+              <div class="adopt-detail-item">
+                <span class="label">昵称</span>
+                <span class="value">{{ detailData.pet?.nickName || '未知' }}</span>
+              </div>
+              <div class="adopt-detail-item">
+                <span class="label">品种</span>
+                <span class="value">{{ detailData.pet?.breed || '未知' }}</span>
+              </div>
+              <div class="adopt-detail-item">
+                <span class="label">类型</span>
+                <span class="value">{{ detailData.pet?.type || '未知' }}</span>
+              </div>
+              <div class="adopt-detail-item">
+                <span class="label">年龄</span>
+                <span class="value">{{ calcPetAge(detailData.pet?.birthday) }}</span>
+              </div>
+              <div class="adopt-detail-item">
+                <span class="label">性别</span>
+                <span class="value">{{ detailData.pet?.gender === 'male' ? '♂ 雄' : detailData.pet?.gender === 'female' ? '♀ 雌' : '未知' }}</span>
+              </div>
+              <div class="adopt-detail-item">
+                <span class="label">疫苗</span>
+                <span class="value">{{ detailData.pet?.vaccineStatus ? '✅ 已接种' : '❌ 未接种' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 领养信息 -->
+          <div class="adopt-detail-section">
+            <h4 class="adopt-detail-section-title">📋 领养要求</h4>
+            <div class="adopt-detail-grid">
+              <div class="adopt-detail-item">
+                <span class="label">领养费用</span>
+                <span class="value adopt-fee">{{ detailData.fee > 0 ? `¥${detailData.fee}` : '免费' }}</span>
+              </div>
+              <div class="adopt-detail-item">
+                <span class="label">发布时间</span>
+                <span class="value">{{ formatDate(detailData.createdAt) }}</span>
+              </div>
+              <div v-if="detailData.requirements" class="adopt-detail-item full">
+                <span class="label">领养条件</span>
+                <span class="value">{{ detailData.requirements }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 发布者信息 -->
+          <div class="adopt-detail-section">
+            <h4 class="adopt-detail-section-title">👤 发布者</h4>
+            <div class="adopt-publisher-row">
+              <img
+                class="adopt-publisher-avatar"
+                :src="detailData.user?.avatar ? getImageUrl(detailData.user.avatar) : '/default-avatar.jpg'"
+                alt="发布者头像"
+              />
+              <div class="adopt-publisher-info">
+                <div class="adopt-publisher-name">{{ detailData.user?.nickname || detailData.user?.username || '匿名用户' }}</div>
+                <div v-if="detailData.description" class="adopt-publisher-desc">{{ detailData.description }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部操作 -->
+        <div class="adopt-detail-footer">
+          <button class="adopt-detail-cancel" @click="closeDetailModal">关闭</button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <style lang="scss" scoped>
@@ -332,6 +501,22 @@ onMounted(() => fetchMyApplications())
 
   &:hover { background: #e9d5ff; color: #7c3aed; }
   &.active { background: #7c3aed; color: #fff; }
+
+  .pending-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 10px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    margin-left: 5px;
+    line-height: 1;
+  }
 }
 
 /* 空状态 */
@@ -589,5 +774,207 @@ onMounted(() => fetchMyApplications())
     color: #ef4444;
     &:hover { background: #fecaca; }
   }
+}
+
+/* ──────────────────────────────────────────────────────
+   领养详情弹窗（adopt-detail- 前缀，避免DaisyUI冲突）
+────────────────────────────────────────────────────── */
+.adopt-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.adopt-detail-box {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  position: relative;
+  z-index: 10000;
+}
+
+.adopt-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
+
+  h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1f2937;
+  }
+}
+
+.adopt-detail-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  &:hover { background: #fee2e2; color: #ef4444; }
+}
+
+.adopt-detail-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.adopt-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 0 4px;
+}
+
+.adopt-detail-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  .adopt-detail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .adopt-detail-status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+}
+
+.adopt-detail-section {
+  padding: 14px 22px;
+  border-bottom: 1px solid #f9f9f9;
+
+  &:last-child { border-bottom: none; }
+}
+
+.adopt-detail-section-title {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.adopt-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.adopt-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  &.full { grid-column: 1 / -1; }
+
+  .label {
+    font-size: 11px;
+    color: #9ca3af;
+    font-weight: 500;
+  }
+
+  .value {
+    font-size: 14px;
+    color: #1f2937;
+    font-weight: 500;
+  }
+
+  .adopt-fee {
+    color: #f97316;
+    font-weight: 700;
+    font-size: 15px;
+  }
+}
+
+.adopt-publisher-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.adopt-publisher-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid #f0f0f0;
+}
+
+.adopt-publisher-info {
+  flex: 1;
+
+  .adopt-publisher-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 3px;
+  }
+
+  .adopt-publisher-desc {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+}
+
+.adopt-detail-footer {
+  padding: 14px 22px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.adopt-detail-cancel {
+  padding: 9px 28px;
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { background: #e5e7eb; }
 }
 </style>

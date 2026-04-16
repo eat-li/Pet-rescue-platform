@@ -110,16 +110,7 @@ onUnmounted(() => {
           <p class="carousel-subtitle text-lg md:text-xl lg:text-2xl mb-8 opacity-90">
             我们提供先进的宠物管理系统，帮助您管理宠物的每个部分，让您的宠物过上更健康的生活。
           </p>
-          <div class="carousel-buttons flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              class="carousel-btn carousel-btn-primary px-6 py-3 rounded-lg font-semibold text-lg transition-all duration-300">
-              联系我们
-            </button>
-            <button
-              class="carousel-btn carousel-btn-secondary px-6 py-3 rounded-lg font-semibold text-lg transition-all duration-300">
-              立即体验
-            </button>
-          </div>
+          
         </div>
       </div>
 

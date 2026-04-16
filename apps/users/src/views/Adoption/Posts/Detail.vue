@@ -4,21 +4,41 @@ import { useRoute, useRouter } from 'vue-router'
 import { getAdoptionDetailAPI, submitAdoptionApplicationAPI } from '@/api/adoption'
 import Toast from '@/components/Common/Toast.vue'
 import { useToast } from '@/hooks/Common/useToast.js'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const {
   showToast, toastMessage, toastType, duration,
   showSuccess, showError, showWarning, hideToast
 } = useToast()
 
+// ── 登录状态 & 是否是发布者 ─────────────────────────────────
+const isLoggedIn   = computed(() => !!userStore.token)
+const isPublisher  = computed(() => {
+  const uid = userStore.userInfo?.id
+  return uid && adoption.value?.userId === uid
+})
+
+// 点击申请领养按鈕——先检查登录状态
+const handleApplyClick = () => {
+  if (!isLoggedIn.value) {
+    showWarning('请先登录后再申请领养')
+    setTimeout(() => router.push('/login'), 1500)
+    return
+  }
+  applyError.value = ''
+  showModal.value = true
+}
 const adoption = ref(null)
 const loading = ref(true)
 const error = ref(null)
 const showModal = ref(false)
 const applying = ref(false)
 const applySuccess = ref(false)
+const applyError = ref('')
 
 const applyForm = ref({
   name: '',
@@ -103,6 +123,7 @@ const submitApply = async () => {
     showWarning('请填写姓名和联系方式')
     return
   }
+  applyError.value = ''
   applying.value = true
   try {
     await submitAdoptionApplicationAPI({
@@ -121,7 +142,13 @@ const submitApply = async () => {
     }, 2000)
   } catch (err) {
     applying.value = false
-    showError(err.message || '申请失败，请稍后重试')
+    if (err.status === 401 || err.code === 401) {
+      showModal.value = false
+      showWarning('登录已过期，请重新登录')
+      setTimeout(() => router.push('/login'), 1500)
+    } else {
+      applyError.value = err.message || '申请失败，请稍后重试'
+    }
   }
 }
 
@@ -195,14 +222,19 @@ onMounted(fetchDetail)
             </div>
           </div>
 
-          <!-- 操作按钮 -->
-          <button
-            v-if="adoption.status === 'pending'"
-            class="apply-btn"
-            @click="showModal = true"
-          >
-            💌 申请领养
-          </button>
+          <!-- 操作按鈕：未登录/非发布者可申请 -->
+          <template v-if="adoption.status === 'pending'">
+            <button
+              v-if="!isPublisher"
+              class="apply-btn"
+              @click="handleApplyClick"
+            >
+              💌 申请领养
+            </button>
+            <div v-else class="publisher-notice">
+              🐾 这是您发布的领养帖子
+            </div>
+          </template>
           <button v-else class="apply-btn disabled" disabled>
             {{ statusMap[adoption.status]?.label }}
           </button>
@@ -285,28 +317,28 @@ onMounted(fetchDetail)
 
     <!-- 申请领养弹窗 -->
     <Teleport to="body">
-      <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
-        <div class="modal-box">
+      <div v-if="showModal" class="adopt-apply-overlay" @click.self="showModal = false">
+        <div class="adopt-apply-box">
           <div v-if="applySuccess" class="apply-success">
             <div class="success-icon">🎉</div>
             <h3>申请已提交！</h3>
             <p>发布人会尽快与您联系，请保持电话畅通。</p>
           </div>
           <template v-else>
-            <div class="modal-header">
+            <div class="adopt-apply-header">
               <h3>申请领养 · {{ pet.nickName }}</h3>
-              <button class="modal-close" @click="showModal = false">✕</button>
+              <button class="adopt-apply-close" @click="showModal = false">✕</button>
             </div>
-            <div class="modal-body">
-              <div class="form-item">
+            <div class="adopt-apply-body">
+              <div class="adopt-form-item">
                 <label>您的姓名 <span class="required">*</span></label>
                 <input v-model="applyForm.name" placeholder="请输入您的真实姓名" />
               </div>
-              <div class="form-item">
+              <div class="adopt-form-item">
                 <label>联系方式 <span class="required">*</span></label>
                 <input v-model="applyForm.phone" placeholder="请输入手机号或微信" />
               </div>
-              <div class="form-item">
+              <div class="adopt-form-item">
                 <label>养宠经验</label>
                 <select v-model="applyForm.experience">
                   <option value="">请选择</option>
@@ -316,12 +348,15 @@ onMounted(fetchDetail)
                   <option value="rich">丰富经验（5年以上）</option>
                 </select>
               </div>
-              <div class="form-item">
+              <div class="adopt-form-item">
                 <label>申请理由</label>
                 <textarea v-model="applyForm.reason" placeholder="说说您为什么想领养这只宠物..." rows="3" />
               </div>
             </div>
-            <div class="modal-footer">
+            <div v-if="applyError" class="adopt-apply-error">
+              ⚠️ {{ applyError }}
+            </div>
+            <div class="adopt-apply-footer">
               <button class="cancel-btn" @click="showModal = false">取消</button>
               <button class="submit-btn" :disabled="applying" @click="submitApply">
                 {{ applying ? '提交中...' : '提交申请' }}
@@ -333,14 +368,16 @@ onMounted(fetchDetail)
     </Teleport>
   </div>
 
-  <!-- Toast 提示 -->
-  <Toast
-    :show-toast="showToast"
-    :toast-message="toastMessage"
-    :toast-type="toastType"
-    :duration="duration"
-    @hide-toast="hideToast"
-  />
+  <!-- Toast 提示（使用 Teleport 确保覆盖在 modal 之上） -->
+  <Teleport to="body">
+    <Toast
+      :show-toast="showToast"
+      :toast-message="toastMessage"
+      :toast-type="toastType"
+      :duration="duration"
+      @hide-toast="hideToast"
+    />
+  </Teleport>
 </template>
 
 <style lang="scss" scoped>
@@ -488,6 +525,18 @@ onMounted(fetchDetail)
   &.disabled { background: #d1d5db; box-shadow: none; cursor: not-allowed; }
 }
 
+.publisher-notice {
+  width: 100%;
+  padding: 14px 16px;
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #16a34a;
+  text-align: center;
+}
+
 .right-col {
   background: white;
   border-radius: 20px;
@@ -569,28 +618,30 @@ onMounted(fetchDetail)
   }
 }
 
-/* 弹窗 */
-.modal-overlay {
+/* 申请领养弹窗（类名使用 adopt-apply- 前缀，避免与 DaisyUI 冲突） */
+.adopt-apply-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   padding: 20px;
 }
 
-.modal-box {
-  background: white;
+.adopt-apply-box {
+  background: #ffffff;
   border-radius: 20px;
   width: 100%;
   max-width: 480px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.2);
   overflow: hidden;
+  position: relative;
+  z-index: 10000;
 }
 
-.modal-header {
+.adopt-apply-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -598,18 +649,18 @@ onMounted(fetchDetail)
   border-bottom: 1px solid #f3f4f6;
 
   h3 { font-size: 17px; font-weight: 700; color: #1f2937; margin: 0; }
-  .modal-close { background: none; border: none; font-size: 18px; cursor: pointer; color: #9ca3af; padding: 0;
+  .adopt-apply-close { background: none; border: none; font-size: 18px; cursor: pointer; color: #9ca3af; padding: 0;
     &:hover { color: #374151; }
   }
 }
 
-.modal-body {
+.adopt-apply-body {
   padding: 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 
-  .form-item {
+  .adopt-form-item {
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -618,22 +669,25 @@ onMounted(fetchDetail)
 
     input, select, textarea {
       padding: 10px 14px;
-      border: 1.5px solid #e5e7eb;
+      border: 1.5px solid #e5e7eb !important;
       border-radius: 10px;
       font-size: 14px;
       color: #1f2937;
-      outline: none;
+      outline: none !important;
       transition: border-color 0.2s;
       font-family: inherit;
+      background: #ffffff;
+      width: 100%;
+      box-sizing: border-box;
 
-      &:focus { border-color: #f97316; }
+      &:focus { border-color: #f97316 !important; }
     }
 
     textarea { resize: vertical; }
   }
 }
 
-.modal-footer {
+.adopt-apply-footer {
   display: flex;
   gap: 12px;
   padding: 16px 24px;
@@ -667,6 +721,16 @@ onMounted(fetchDetail)
     &:hover:not(:disabled) { opacity: 0.9; }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
   }
+}
+
+.adopt-apply-error {
+  padding: 10px 24px 0;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  background: #fef2f2;
+  border-top: 1px solid #fecaca;
 }
 
 .apply-success {

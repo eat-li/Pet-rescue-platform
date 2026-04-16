@@ -6,6 +6,8 @@ const { PersonAuth } = require("../../middleware/auth")
 // =============== 预约相关 ===============
 // 创建预约
 router.post('/booking', PersonAuth, UserBookingService.CreateBookingService)
+// 批量创建预约（从购物车）
+router.post('/bookings/batch', PersonAuth, UserBookingService.BatchCreateBookingService)
 // 获取用户预约列表
 router.get('/bookings', PersonAuth, UserBookingService.GetUserBookingsService)
 // 获取用户预约详情
