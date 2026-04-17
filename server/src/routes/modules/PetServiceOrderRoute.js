@@ -3,13 +3,11 @@ const router = express.Router()
 const { PersonAuth } = require('../../middleware/auth')
 const PetServiceOrderService = require('../../services/PetServiceOrderService')
 const upload = require("../../utils/upload")
-const { setServiceDir } = require("../../middleware/sendDir")
 
 // 上传服务图片
 router.post(
   '/upload',
   PersonAuth,
-  setServiceDir('services/uploadService'),
   upload.single('service'),
   PetServiceOrderService.PetServiceOrderUploadService
 )

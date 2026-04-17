@@ -126,6 +126,23 @@ watch(() => commentError.value, (newError) => {
 const commentText = ref('')
 const isSubmitting = ref(false)
 
+// 回复相关数据
+const replyText = ref({}) // 存储每条评论的回复内容，键为评论ID
+const activeReplyId = ref(null) // 当前正在回复的评论ID
+const isReplying = ref(false)
+
+// 切换回复状态
+const toggleReply = (commentId) => {
+  if (activeReplyId.value === commentId) {
+    activeReplyId.value = null
+  } else {
+    activeReplyId.value = commentId
+    if (!replyText.value[commentId]) {
+      replyText.value[commentId] = ''
+    }
+  }
+}
+
 // 发送评论
 const handleSendComment = async () => {
   if (!commentText.value.trim()) {
@@ -151,15 +168,25 @@ const handleSendComment = async () => {
 
 // 回复评论
 const handleReplyComment = async (parentId, content) => {
+  if (!content.trim()) {
+    showError('请输入回复内容')
+    return
+  }
+  
+  isReplying.value = true
   try {
-    const result = await postComment(content, parentId)
+    const result = await postComment(content.trim(), parentId)
     if (result.success) {
+      replyText.value[parentId] = ''
+      activeReplyId.value = null
       showSuccess('回复发送成功')
     } else {
       showError(result.error || '回复发送失败')
     }
   } catch (error) {
     showError('回复发送失败')
+  } finally {
+    isReplying.value = false
   }
 }
 
@@ -191,15 +218,15 @@ onUnmounted(() => {
         </button>
       </section>
 
-      <!-- 顶部封面图片卡片 -->
-      <section class="cover-card" v-if="articleDetail.images && articleDetail.images.length > 0">
-        <img 
-          :src="getSafeImageUrl(articleDetail.images, 0)" 
+      <!-- 顶部封面图片卡片（已隐藏，图片在轮播区域展示） -->
+      <!-- <section class="cover-card" v-if="articleDetail.images && articleDetail.images.length > 0">
+        <img
+          :src="getSafeImageUrl(articleDetail.images, 0)"
           :alt="articleDetail.title || '文章封面'"
           @click="openImagePreview(getSafeImageUrl(articleDetail.images, 0), 0)"
           class="clickable-image"
         >
-      </section>
+      </section> -->
 
       <!-- 用户信息和帖子基本信息字段 -->
       <section class="article-info">
@@ -301,10 +328,36 @@ onUnmounted(() => {
               {{ comment.content }}
             </div>
             <div class="comment-actions">
-              <button class="action-btn reply-btn">
+              <button class="action-btn reply-btn" @click="toggleReply(comment.id)">
                 <i class="fas fa-reply"></i>
-                回复
+                {{ activeReplyId === comment.id ? '取消回复' : '回复' }}
               </button>
+            </div>
+
+            <!-- 回复输入框 -->
+            <div v-if="activeReplyId === comment.id" class="reply-input-area">
+              <textarea
+                v-model="replyText[comment.id]"
+                placeholder="写下你的回复..."
+                class="reply-textarea"
+                rows="2"
+                :disabled="isReplying"
+              ></textarea>
+              <div class="reply-actions-btn">
+                <button
+                  class="cancel-reply-btn"
+                  @click="toggleReply(comment.id)"
+                >
+                  取消
+                </button>
+                <button
+                  class="submit-reply-btn"
+                  :disabled="!replyText[comment.id]?.trim() || isReplying"
+                  @click="handleReplyComment(comment.id, replyText[comment.id])"
+                >
+                  {{ isReplying ? '发送中...' : '发送回复' }}
+                </button>
+              </div>
             </div>
 
             <!-- 回复列表 -->
@@ -322,7 +375,7 @@ onUnmounted(() => {
                     {{ reply.content }}
                   </div>
                   <div class="reply-actions">
-                    <button class="action-btn reply-btn">
+                    <button class="action-btn reply-btn" @click="toggleReply(comment.id)">
                       <i class="fas fa-reply"></i>
                       回复
                     </button>
@@ -571,142 +624,8 @@ onUnmounted(() => {
     }
   }
 
-  // 图片预览弹窗样式
-  .image-preview-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    padding: 20px;
-    // 允许滚动但隐藏滚动条
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .image-preview-container {
-    position: relative;
-    max-width: 90vw;
-    max-height: 90vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    // 确保内容可以滚动
-    min-height: min-content;
-  }
-
-  .preview-image-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    // 允许图片区域滚动
-    max-height: 85vh;
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .preview-image {
-    max-width: 85vw;
-    max-height: 85vh;
-    object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  .preview-close-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    z-index: 10001;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.25);
-      transform: rotate(90deg);
-    }
-  }
-
-  .preview-nav-btn {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    z-index: 10001;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    &.preview-prev-btn {
-      left: 20px;
-    }
-
-    &.preview-next-btn {
-      right: 20px;
-    }
-  }
-
-  .preview-counter {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    font-size: 14px;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 8px 20px;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    z-index: 10001;
-  }
-
-  // 过渡动画
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.3s ease;
-  }
-
-  .fade-enter-from,
-  .fade-leave-to {
-    opacity: 0;
-  }
+  // 图片预览弹窗样式已移至非 scoped style 块
+  // 因为 Teleport to="body" 元素在 scoped 外部
 
   .stats {
     margin: 0 auto;
@@ -918,6 +837,80 @@ onUnmounted(() => {
             }
           }
 
+          // 回复输入框样式
+          .reply-input-area {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+
+            .reply-textarea {
+              width: 100%;
+              border: 1px solid #e5e7eb;
+              border-radius: 6px;
+              padding: 10px;
+              font-size: 13px;
+              line-height: 1.5;
+              resize: vertical;
+              min-height: 60px;
+              font-family: inherit;
+              background: white;
+
+              &:focus {
+                outline: none;
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+              }
+
+              &::placeholder {
+                color: #9ca3af;
+              }
+            }
+
+            .reply-actions-btn {
+              display: flex;
+              justify-content: flex-end;
+              gap: 8px;
+              margin-top: 10px;
+
+              .cancel-reply-btn {
+                padding: 6px 12px;
+                background: #f3f4f6;
+                color: #6b7280;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                cursor: pointer;
+                transition: all 0.2s;
+
+                &:hover {
+                  background: #e5e7eb;
+                }
+              }
+
+              .submit-reply-btn {
+                padding: 6px 12px;
+                background: #3b82f6;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                cursor: pointer;
+                transition: all 0.2s;
+
+                &:hover:not(:disabled) {
+                  background: #2563eb;
+                }
+
+                &:disabled {
+                  background: #d1d5db;
+                  cursor: not-allowed;
+                }
+              }
+            }
+          }
+
           .replies-list {
             margin-top: 15px;
             padding-left: 20px;
@@ -1036,5 +1029,146 @@ onUnmounted(() => {
       gap: 10px;
     }
   }
+}
+</style>
+
+<!-- 图片预览弹窗样式（非 scoped，因为 Teleport to="body"） -->
+<style lang="scss">
+.image-preview-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.9) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 99999 !important;
+  padding: 20px !important;
+  overflow-y: auto !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  pointer-events: auto !important;
+}
+
+.image-preview-overlay::-webkit-scrollbar {
+  display: none !important;
+}
+
+.image-preview-container {
+  position: relative !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: min-content !important;
+  z-index: 100000 !important;
+  pointer-events: auto !important;
+}
+
+.preview-image-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.preview-image-wrapper::-webkit-scrollbar {
+  display: none !important;
+}
+
+.preview-image {
+  max-width: 85vw !important;
+  max-height: 85vh !important;
+  object-fit: contain !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.preview-close-btn {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+  font-size: 20px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  z-index: 100001 !important;
+  pointer-events: auto !important;
+}
+
+.preview-close-btn:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  transform: rotate(90deg) !important;
+}
+
+.preview-nav-btn {
+  position: fixed !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+  font-size: 20px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  z-index: 100001 !important;
+  pointer-events: auto !important;
+}
+
+.preview-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.preview-prev-btn {
+  left: 20px !important;
+}
+
+.preview-next-btn {
+  right: 20px !important;
+}
+
+.preview-counter {
+  position: fixed !important;
+  bottom: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  color: white !important;
+  font-size: 14px !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  padding: 8px 20px !important;
+  border-radius: 20px !important;
+  backdrop-filter: blur(10px) !important;
+  z-index: 100001 !important;
+}
+
+/* 过渡动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease !important;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0 !important;
 }
 </style>

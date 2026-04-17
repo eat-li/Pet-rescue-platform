@@ -93,7 +93,8 @@ onUnmounted(() => {
           'fade-in': isTransitioning && index === currentSlide
         }">
           <div class="image-container w-full h-full overflow-hidden">
-            <img :src="item" class="carousel-image w-full h-full object-cover"
+            <img :src="item" :alt="`轮播图 ${index + 1}`" class="carousel-image w-full h-full object-cover"
+              :loading="index === 0 ? 'eager' : 'lazy'"
               :class="{ 'zoom-active': index === currentSlide }" />
             <!-- 添加遮罩层 -->
             <div class="image-overlay"></div>

@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { getNoticeDetailAPI } from '@/api/notice'
 import { baseURL } from '../../http/http.js'
+import { formatImageUrl } from '../../utils/imgformat.js'
 import SampleNav from '../../components/Common/SampleNav.vue'
 import Loading from '../../components/Common/Loading.vue'
 
@@ -39,10 +40,7 @@ const fetchNoticeDetail = async () => {
 const getCoverImage = (notice) => {
   if (!notice) return ''
   if (notice.cover) {
-    if (notice.cover.startsWith('http')) {
-      return notice.cover
-    }
-    return baseURL + notice.cover
+    return formatImageUrl(notice.cover)
   }
   // 默认图片
   return 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=1200&h=400&fit=crop'

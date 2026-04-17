@@ -1,10 +1,15 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, inject, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getArticleListAPI } from '@/api/article'
 import { baseURL } from '../../../http/http.js'
+import { formatImageUrl } from '../../../utils/imgformat.js'
 
 const router = useRouter()
+
+// 尝试从父组件获取共享数据
+const homeData = inject('homeData', null)
+
 const activeIndex = ref(0)
 const articleList = ref([])
 const loading = ref(false)
@@ -23,6 +28,13 @@ const goToPosts = () => {
 
 // 获取文章列表（按点赞数排序取前4条）
 const fetchArticles = async () => {
+  // 如果父组件已提供数据，直接使用
+  if (homeData && homeData.articles && homeData.articles.length > 0) {
+    articleList.value = homeData.articles
+    return
+  }
+  
+  // 兼容独立使用的情况，自己请求数据
   try {
     loading.value = true
     const res = await getArticleListAPI({ page: 1, limit: 4 })
@@ -34,19 +46,36 @@ const fetchArticles = async () => {
   }
 }
 
+// 监听父组件数据变化
+watch(
+  () => homeData?.articles,
+  (newArticles) => {
+    if (newArticles && newArticles.length > 0) {
+      articleList.value = newArticles
+      loading.value = false
+    }
+  },
+  { immediate: true }
+)
+
+onMounted(() => {
+  // 如果父组件没有提供数据，自己请求
+  if (!homeData || !homeData.articles || homeData.articles.length === 0) {
+    fetchArticles()
+  }
+})
+
 // 安全获取文章封面图
 const getCoverImage = (article) => {
   if (article.images && article.images.length > 0) {
-    return baseURL + article.images[0]
+    return formatImageUrl(article.images[0])
   }
   return ''
 }
 
 // 安全获取用户头像
 const getAvatarUrl = (avatar) => {
-  if (!avatar) return ''
-  if (avatar.startsWith('http')) return avatar
-  return baseURL + avatar
+  return formatImageUrl(avatar)
 }
 
 // 去除 HTML 标签，截取纯文本摘要
@@ -54,15 +83,6 @@ const stripHtml = (html) => {
   if (!html) return ''
   return html.replace(/<[^>]+>/g, '').slice(0, 60)
 }
-
-const getBackgroundStyle = (article) => {
-  const img = getCoverImage(article)
-  return img
-    ? { backgroundImage: `url(${img})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }
-    : { background: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' }
-}
-
-onMounted(fetchArticles)
 </script>
 
 <template>
@@ -96,18 +116,27 @@ onMounted(fetchArticles)
         <li
           v-for="(item, index) in articleList"
           :key="item.id"
-          :style="getBackgroundStyle(item)"
           class="petitem"
           :class="{ active: activeIndex === index }"
           @mouseenter="handleMouseEnter(index)"
           @click="router.push(`/posts/${item.id}`)"
         >
+          <!-- 背景图片 -->
+          <img
+            v-if="getCoverImage(item)"
+            :src="getCoverImage(item)"
+            :alt="item.title"
+            loading="lazy"
+            class="petitem-bg-img"
+          />
+          <div v-else class="petitem-bg-gradient"></div>
           <!-- 用户信息 -->
           <div class="myinfo">
             <img
               class="myinfo-avatar"
               :src="getAvatarUrl(item.user?.avatar)"
               :alt="item.user?.nickname"
+              loading="lazy"
               @error="(e) => e.target.style.display = 'none'"
             />
             <span class="myinfo-name">{{ item.user?.nickname || '匿名用户' }}</span>
@@ -234,6 +263,23 @@ onMounted(fetchArticles)
         cursor: pointer;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 
+        // 背景图片样式
+        .petitem-bg-img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.4s ease-in-out;
+        }
+
+        // 渐变背景（无图片时）
+        .petitem-bg-gradient {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+        }
+
         // 渐变遮罩
         &::after {
           content: '';
@@ -252,6 +298,9 @@ onMounted(fetchArticles)
 
         &:hover {
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          .petitem-bg-img {
+            transform: scale(1.05);
+          }
         }
 
         &.active {

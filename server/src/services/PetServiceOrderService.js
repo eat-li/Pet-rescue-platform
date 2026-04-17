@@ -1,5 +1,6 @@
 const PetServiceOrder = require('../models/Product/PetServiceOrder')
 const { Op } = require('sequelize')
+const { uploadToOSS } = require('../utils/ossUpload')
 
 // 获取服务列表
 exports.PetServiceOrderListService = async (req, res) => {
@@ -315,7 +316,8 @@ exports.PetServiceOrderUploadService = async (req, res) => {
       })
     }
 
-    const fileUrl = `/services/uploadService/${file.filename}`
+    // 上传到 OSS
+    const fileUrl = await uploadToOSS(file.buffer, file.originalname, 'services')
 
     return res.status(200).json({
       code: 200,

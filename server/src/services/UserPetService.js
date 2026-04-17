@@ -1,6 +1,7 @@
 const Pet = require('../models/User/MyPet')
 const { Op } = require('sequelize')
 const User = require('../models/User/User')
+const { uploadToOSS } = require('../utils/ossUpload')
 
 // 添加用户宠物
 exports.UserPetAddService = async (req, res) => {
@@ -642,9 +643,8 @@ exports.PetUploadSerivice = async (req, res) => {
       });
     }
 
-    const fileUrl = `/pets/uploadPet/${file.filename}`;
-
-
+    // 上传到 OSS
+    const fileUrl = await uploadToOSS(file.buffer, file.originalname, 'pets');
 
     return res.status(200).json({
       code: 200,

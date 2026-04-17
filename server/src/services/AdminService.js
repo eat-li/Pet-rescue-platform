@@ -3,6 +3,7 @@ const { Op } = require("sequelize")
 const password_encryption = require("../utils/Encryption")
 const { generateToken } = require("../middleware/auth")
 const validator = require("../utils/Validate")
+const { uploadToOSS } = require("../utils/ossUpload")
 
 
 // 管理员登录功能
@@ -122,7 +123,8 @@ exports.AdminAvatarUploadService = async (req, res) => {
     if (!file) {
       return res.status(400).json({ code: 400, message: '请上传文件' })
     }
-    const avatarUrl = `/avatar/uploadAdmin/${file.filename}`
+    // 上传到 OSS
+    const avatarUrl = await uploadToOSS(file.buffer, file.originalname, 'avatar/admin')
     return res.status(200).json({
       code: 200,
       message: '头像上传成功',

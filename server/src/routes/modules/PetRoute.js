@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const { PersonAuth } = require('../../middleware/auth')
 const MyPetService = require('../../services/UserPetService')
-const { setPetDir } = require('../../middleware/sendDir')
 const upload = require('../../utils/upload')
 
 
@@ -38,7 +37,6 @@ router.get('/:id', MyPetService.UserPetGetOneService)
 router.post(
   '/upload',
   PersonAuth,
-  setPetDir('pets/uploadPet'),
   upload.single('pet'),
   MyPetService.PetUploadSerivice)
 

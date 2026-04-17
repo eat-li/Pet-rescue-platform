@@ -65,7 +65,7 @@ const location = props.adoption.request?.location || '地点未填写'
   <div class="adoption-card" @click="goDetail">
     <!-- 图片区域 -->
     <div class="card-image">
-      <img :src="getImageUrl(pet.image)" :alt="pet.nickName" />
+      <img :src="getImageUrl(pet.image)" :alt="pet.nickName" loading="lazy" />
       <!-- 状态徽章 -->
       <span class="status-badge" :class="statusMap[adoption.status]?.class">
         {{ statusMap[adoption.status]?.label }}

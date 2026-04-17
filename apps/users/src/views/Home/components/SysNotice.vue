@@ -1,10 +1,14 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getNoticeListAPI } from '@/api/notice'
 import { baseURL } from '../../../http/http.js'
+import { formatImageUrl } from '../../../utils/imgformat.js'
 
 const router = useRouter()
+
+// 尝试从父组件获取共享数据
+const homeData = inject('homeData', null)
 
 // 公告列表数据
 const noticeList = ref([])
@@ -12,10 +16,16 @@ const loading = ref(false)
 
 // 获取公告列表
 const fetchNotices = async () => {
+  // 如果父组件已提供数据，直接使用
+  if (homeData && homeData.notices && homeData.notices.length > 0) {
+    noticeList.value = homeData.notices
+    return
+  }
+  
+  // 兼容独立使用的情况，自己请求数据
   try {
     loading.value = true
     const res = await getNoticeListAPI({ page: 1, limit: 6, status: 'true' })
-    // 后端返回的数据结构: { code, message, data: { notices, pagination } }
     if (res.data?.code === 200) {
       noticeList.value = res.data.data?.notices || []
     } else {
@@ -29,15 +39,30 @@ const fetchNotices = async () => {
   }
 }
 
+// 监听父组件数据变化
+watch(
+  () => homeData?.notices,
+  (newNotices) => {
+    if (newNotices && newNotices.length > 0) {
+      noticeList.value = newNotices
+      loading.value = false
+    }
+  },
+  { immediate: true }
+)
+
+// 页面首次加载时请求数据
+onMounted(() => {
+  // 如果父组件没有提供数据，自己请求
+  if (!homeData || !homeData.notices || homeData.notices.length === 0) {
+    fetchNotices()
+  }
+})
+
 // 获取公告封面图片
 const getCoverImage = (notice) => {
   if (notice.cover) {
-    // 如果cover已经是完整URL，直接返回
-    if (notice.cover.startsWith('http')) {
-      return notice.cover
-    }
-    // 否则拼接baseURL
-    return baseURL + notice.cover
+    return formatImageUrl(notice.cover)
   }
   // 默认图片
   const defaultImages = [
@@ -77,11 +102,6 @@ const getSummary = (content) => {
 const goToNoticeDetail = (id) => {
   router.push(`/notice/${id}`)
 }
-
-// 页面首次加载则，请求数据
-onMounted(() => {
-  fetchNotices()
-})
 </script>
 
 <template>
@@ -99,7 +119,7 @@ onMounted(() => {
       <div class="notice-card" v-for="item in noticeList" :key="item.id" @click="goToNoticeDetail(item.id)">
         <!-- 背景图片 -->
         <div class="card-background">
-          <img :src="getCoverImage(item)" alt="公告背景" class="background-img" />
+          <img :src="getCoverImage(item)" alt="公告背景" loading="lazy" class="background-img" />
           <!-- 渐变遮罩 -->
           <div class="gradient-overlay"></div>
         </div>

@@ -40,7 +40,7 @@ const MyPet = sequelize.define('Pet', {
     comment: '出生日期'
   },
   image: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.STRING(500),
     allowNull: false,
     comment: '宠物图片'
   },

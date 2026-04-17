@@ -16,7 +16,7 @@ const navigateTo = (route, tab) => {
     <div class="nav-container">
       <!-- Logo/品牌名 -->
       <div class="nav-brand">
-        <h2>萌宠平台</h2>
+        <h2>Pet Platform</h2>
       </div>
 
       <!-- 导航菜单 -->

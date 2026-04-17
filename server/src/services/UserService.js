@@ -3,6 +3,7 @@ const { Op } = require("sequelize")
 const password_encryption = require("../utils/Encryption")
 const validator = require("../utils/Validate")
 const { generateToken } = require("../middleware/auth")
+const { uploadToOSS } = require("../utils/ossUpload")
 
 // 用户注册
 exports.UserRegister = async (req, res) => {
@@ -565,8 +566,10 @@ exports.UserUploadAvatarService = async (req, res) => {
     const user = await User.findByPk(id)
     if (!user) return res.status(404).json({ msg: '用户不存在' })
 
+    // 上传到 OSS
+    const avatarUrl = await uploadToOSS(file.buffer, file.originalname, `avatar/user/${id}`)
+    
     // 更新用户头像
-    const avatarUrl = `/avatar/uploadUserAvatar/${id}/${file.filename}`
     await user.update({ avatar: avatarUrl })
     res.status(200).json({
       code: 200,

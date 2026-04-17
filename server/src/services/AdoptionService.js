@@ -2,6 +2,7 @@ const Adoption = require('../models/Rescue/Adoption')
 const AdoptionApplication = require('../models/Rescue/AdoptionApplication')
 const User = require('../models/User/User')
 const Pet = require('../models/User/MyPet')
+const { uploadToOSS } = require('../utils/ossUpload')
 
 // 创建领养宠物信息
 exports.AdoptionCreateService = async (req, res) => {
@@ -490,7 +491,8 @@ exports.AdoptionUploadService = async (req, res) => {
       })
     }
 
-    const fileUrl = `/adoptions/uploadAdoption/${file.filename}`
+    // 上传到 OSS
+    const fileUrl = await uploadToOSS(file.buffer, file.originalname, 'adoptions')
 
     return res.status(200).json({
       code: 200,

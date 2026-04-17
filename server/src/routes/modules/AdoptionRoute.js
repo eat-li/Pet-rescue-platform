@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const AdoptionService = require('../../services/AdoptionService')
 const { PersonAuth } = require('../../middleware/auth')
-const { setAdoptionDir } = require('../../middleware/sendDir')
 const upload = require('../../utils/upload')
 
 // ─── 创建领养宠物信息 ─────────────────────────────────────────
@@ -12,7 +11,6 @@ router.post('/', PersonAuth, AdoptionService.AdoptionCreateService)
 router.post(
   '/upload',
   PersonAuth,
-  setAdoptionDir('adoptions/uploadAdoption'),
   upload.single('adoption'),
   AdoptionService.AdoptionUploadService
 )

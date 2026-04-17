@@ -3,7 +3,6 @@ const router = express.Router()
 const { PersonAuth } = require("../../middleware/auth")
 const ArticleService = require("../../services/ArticleService")
 const upload = require("../../utils/upload")
-const { setArticleDir } = require("../../middleware/sendDir")
 
 
 // 发布文章(用户需要登录了才能发布）
@@ -67,7 +66,6 @@ router.post('/users/status', PersonAuth, ArticleService.ArticleUserStatusService
 router.post(
   '/upload',
   PersonAuth,
-  setArticleDir('articles/uploadArticle'),
   upload.array('articles', 5),
   ArticleService.ArticleUploadService)
 

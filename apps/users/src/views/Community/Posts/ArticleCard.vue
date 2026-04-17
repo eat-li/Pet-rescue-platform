@@ -1,6 +1,7 @@
 <script setup>
 import { baseURL } from "../../../http/http.js"
 import dateCover from "../../../utils/dateCover.js"
+import { formatImageUrl } from "../../../utils/imgformat.js"
 import { useRouter } from "vue-router"
 import { ref, watch, onMounted } from 'vue'
 import { articleLikeAPI, articleCollectAPI, getUserArticleStatusAPI } from "../../../api/article.js"
@@ -145,7 +146,7 @@ const handleShare = () => {
     <div class="article-header">
       <div class="user-info">
         <div class="avatar">
-          <img :src="baseURL + article.user.avatar" :alt="article.user.nickname" />
+          <img :src="formatImageUrl(article.user.avatar)" :alt="article.user.nickname" />
         </div>
         <div class="user-details">
           <div class="username">{{ article.user.nickname }}</div>
@@ -168,7 +169,7 @@ const handleShare = () => {
 
     <!-- 文章图片 -->
     <div class="article-image">
-      <img :src="baseURL + article.images[0]" alt="文章图片" />
+      <img :src="formatImageUrl(article.images?.[0])" :alt="article.title || '文章配图'" />
 
       <div class="image-overlay">
         <button class="comment-btn" @click="router.push(`/posts/${article.id}`)">
@@ -313,9 +314,9 @@ const handleShare = () => {
 
 .article-image img {
   width: 100%;
-  height: 300px;
-  /* 从200px增加到300px */
-  object-fit: cover;
+  max-height: 400px;
+  object-fit: contain;
+  background-color: #f0f0f0;
 }
 
 .image-overlay {

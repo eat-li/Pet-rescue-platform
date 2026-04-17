@@ -1,15 +1,25 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AdoptionCard from '../../Adoption/Posts/AdoptionCard.vue'
 import { getAdoptionListAPI } from '@/api/adoption'
 
 const router = useRouter()
 
+// 尝试从父组件获取共享数据
+const homeData = inject('homeData', null)
+
 const adoptionList = ref([])
 const loading = ref(false)
 
 const fetchAdoptions = async () => {
+  // 如果父组件已提供数据，直接使用
+  if (homeData && homeData.adoptions && homeData.adoptions.length > 0) {
+    adoptionList.value = homeData.adoptions
+    return
+  }
+  
+  // 兼容独立使用的情况，自己请求数据
   try {
     loading.value = true
     const result = await getAdoptionListAPI({ page: 1, limit: 4, status: 'pending' })
@@ -21,7 +31,24 @@ const fetchAdoptions = async () => {
   }
 }
 
-onMounted(fetchAdoptions)
+// 监听父组件数据变化
+watch(
+  () => homeData?.adoptions,
+  (newAdoptions) => {
+    if (newAdoptions && newAdoptions.length > 0) {
+      adoptionList.value = newAdoptions
+      loading.value = false
+    }
+  },
+  { immediate: true }
+)
+
+onMounted(() => {
+  // 如果父组件没有提供数据，自己请求
+  if (!homeData || !homeData.adoptions || homeData.adoptions.length === 0) {
+    fetchAdoptions()
+  }
+})
 </script>
 
 <template>

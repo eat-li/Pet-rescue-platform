@@ -1,15 +1,25 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getServiceListAPI } from '../../../api/service.js'
 import { formatImageUrl } from '../../../utils/imgformat.js'
 
 const router = useRouter()
 
+// 尝试从父组件获取共享数据
+const homeData = inject('homeData', null)
+
 const serviceList = ref([])
 const loading = ref(false)
 
 const fetchServices = async () => {
+  // 如果父组件已提供数据，直接使用
+  if (homeData && homeData.services && homeData.services.length > 0) {
+    serviceList.value = homeData.services
+    return
+  }
+  
+  // 兼容独立使用的情况，自己请求数据
   try {
     loading.value = true
     const res = await getServiceListAPI({ page: 1, limit: 4, status: 'true' })
@@ -22,10 +32,27 @@ const fetchServices = async () => {
   }
 }
 
+// 监听父组件数据变化
+watch(
+  () => homeData?.services,
+  (newServices) => {
+    if (newServices && newServices.length > 0) {
+      serviceList.value = newServices
+      loading.value = false
+    }
+  },
+  { immediate: true }
+)
+
+onMounted(() => {
+  // 如果父组件没有提供数据，自己请求
+  if (!homeData || !homeData.services || homeData.services.length === 0) {
+    fetchServices()
+  }
+})
+
 const goService = (id) => router.push(`/service/${id}`)
 const goServiceList = () => router.push('/service')
-
-onMounted(fetchServices)
 </script>
 
 <template>
@@ -59,10 +86,11 @@ onMounted(fetchServices)
         >
           <!-- 服务图片 -->
           <div class="card-image">
-            <img 
-              v-if="item.image" 
-              :src="formatImageUrl(item.image)" 
+            <img
+              v-if="item.image"
+              :src="formatImageUrl(item.image)"
               :alt="item.name"
+              loading="lazy"
               class="service-img"
             >
             <div v-else class="card-image-placeholder">

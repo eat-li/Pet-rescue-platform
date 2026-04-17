@@ -1,5 +1,6 @@
 const Notice = require("../models/Admin/Notice")
 const {Op} = require("sequelize")
+const { uploadToOSS } = require('../utils/ossUpload')
 
 // 创建公告
 exports.NoticeCreateService = async (req, res) => {
@@ -420,7 +421,8 @@ exports.NoticeUploadService = async (req, res) => {
       })
     }
 
-    const fileUrl = `/notices/uploadNotice/${file.filename}`
+    // 上传到 OSS
+    const fileUrl = await uploadToOSS(file.buffer, file.originalname, 'notices')
 
     return res.status(200).json({
       code: 200,

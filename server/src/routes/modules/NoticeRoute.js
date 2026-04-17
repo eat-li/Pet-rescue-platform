@@ -3,13 +3,11 @@ const router = express.Router()
 const {PersonAuth} =require("../../middleware/auth")
 const NoticeService = require('../../services/NoticeService')
 const upload = require("../../utils/upload")
-const { setNoticeDir } = require("../../middleware/sendDir")
 
 // 上传公告图片
 router.post(
   '/upload',
   PersonAuth,
-  setNoticeDir('notices/uploadNotice'),
   upload.single('notice'),
   NoticeService.NoticeUploadService
 )

@@ -3,7 +3,6 @@ const router = express.Router()
 const AdminService = require('../../services/AdminService')
 const { PersonAuth } = require('../../middleware/auth')
 const upload = require('../../utils/upload')
-const { setAvatarDir } = require('../../middleware/sendDir')
 
 // 管理员登录
 router.post('/login', AdminService.AdminLoginService)
@@ -12,6 +11,6 @@ router.post('/login', AdminService.AdminLoginService)
 router.patch('/:id', PersonAuth, AdminService.AdminUpdateService)
 
 // 管理员头像上传
-router.post('/avatar/:id', PersonAuth, setAvatarDir('avatar/uploadAdmin'), upload.single('avatar'), AdminService.AdminAvatarUploadService)
+router.post('/avatar/:id', PersonAuth, upload.single('avatar'), AdminService.AdminAvatarUploadService)
 
 module.exports = router

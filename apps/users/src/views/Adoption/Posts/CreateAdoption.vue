@@ -182,7 +182,7 @@ const handleSubmit = async () => {
               <input type="file" id="pet-img" accept="image/*" @change="handleImageChange" style="display:none" />
               <label for="pet-img" class="upload-trigger">
                 <div v-if="imageLoading" class="upload-loading">🔄 上传中...</div>
-                <img v-else-if="imagePreview" :src="imagePreview" alt="预览" class="preview-img" />
+                <img v-else-if="imagePreview" :src="imagePreview" alt="宠物照片预览" class="preview-img" />
                 <div v-else class="upload-placeholder">
                   <span class="upload-icon">📷</span>
                   <p>点击上传宠物照片</p>

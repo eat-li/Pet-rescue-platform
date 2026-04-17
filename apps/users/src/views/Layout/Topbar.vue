@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '../../stores/user'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { baseURL } from '../../http/http'
+import { formatImageUrl } from '../../utils/imgformat'
 import throttle from '../../utils/throttle'
 
 
@@ -88,6 +89,11 @@ const userName = computed(() => {
   return userStore.userInfo?.name || userStore.userInfo?.username || '用户'
 })
 
+// 获取用户头像URL
+const userAvatar = computed(() => {
+  return formatImageUrl(userStore.userInfo?.avatar)
+})
+
 // 模态框状态管理
 const showLogoutModal = ref(false)
 
@@ -153,7 +159,7 @@ const goMyPets = () => {
           <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click="scrollToNotice">最新公告</a>
           </li>
           <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click="router.push('/adopt')">宠物领养</a></li>
-          <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base">寻宠地图</a></li>
+          <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click="router.push('/posts')">宠物社区</a></li>
           <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click="router.push('/service')">宠物服务</a></li>
           <!-- 登录状态下的移动端菜单 -->
           <template v-if="isLogin">
@@ -226,7 +232,7 @@ const goMyPets = () => {
               class="flex items-center gap-2 hover:bg-orange-50 rounded-lg p-2 transition-all duration-300">
               <div class="avatar">
                 <div class="mask mask-squircle w-10">
-                  <img :src="baseURL + userStore.userInfo.avatar" alt="用户头像" />
+                  <img :src="userAvatar" alt="用户头像" />
                 </div>
               </div>
               <!-- 桌面端显示用户名 -->
@@ -244,14 +250,7 @@ const goMyPets = () => {
                   </svg>
                   个人中心
                 </a></li>
-              <li><a @click="goMyPets" class="hover:bg-orange-50 hover:text-orange-600">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                    </path>
-                  </svg>
-                  我的宠物
-                </a></li>
+             
               <div class="divider my-1"></div>
               <li><a @click="goLoginOut" class="hover:bg-red-50 hover:text-red-600">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -17,7 +17,7 @@ const Notice = sequelize.define('Notice', {
     allowNull: false
   },
   cover: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.STRING(500),
     allowNull: true,
     comment: '公告封面'
   },

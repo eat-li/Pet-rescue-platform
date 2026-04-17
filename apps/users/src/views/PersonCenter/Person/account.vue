@@ -75,13 +75,17 @@ const startEdit = () => {
 // 保存编辑 - 原始函数
 const _saveEdit = async () => {
   try {
-    // 验证密码字段
-    if (userInfo.value.oldPassword || userInfo.value.password) {
-      if (!userInfo.value.oldPassword) {
+    // 验证密码字段（只有当两个密码字段都有值时才进行密码更新）
+    const hasOldPassword = userInfo.value.oldPassword && userInfo.value.oldPassword.trim() !== ''
+    const hasNewPassword = userInfo.value.password && userInfo.value.password.trim() !== ''
+    
+    if (hasOldPassword || hasNewPassword) {
+      // 只填了其中一个，提示错误
+      if (!hasOldPassword) {
         showError('请输入旧密码')
         return
       }
-      if (!userInfo.value.password) {
+      if (!hasNewPassword) {
         showError('请输入新密码')
         return
       }

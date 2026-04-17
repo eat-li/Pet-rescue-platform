@@ -1,17 +1,71 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useDataView } from '../../../hooks/Common/useDataView.js'
+import { ref, onMounted, inject, watch } from 'vue'
+import { getPetCountAPI } from '../../../api/pet'
+import { getUserCountAPI } from '../../../api/user'
 
-const { petCount, userCount, getPetCount, getUserCount } = useDataView()
+// 尝试从父组件获取共享数据
+const homeData = inject('homeData', null)
+
+const petCount = ref(0)
+const userCount = ref(0)
+const hasRequested = ref(false) // 防止重复请求
 
 // 格式化数字（添加千分位）
 const formatNumber = (num) => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
-onMounted(() => {
-  getPetCount()
-  getUserCount()
+// 更新数据
+const updateData = () => {
+  if (homeData) {
+    petCount.value = homeData.petCount || 0
+    userCount.value = homeData.userCount || 0
+  }
+}
+
+// 监听父组件数据变化
+watch(
+  () => homeData?.petCount,
+  (newVal) => {
+    if (newVal !== undefined) {
+      petCount.value = newVal
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  () => homeData?.userCount,
+  (newVal) => {
+    if (newVal !== undefined) {
+      userCount.value = newVal
+    }
+  },
+  { immediate: true }
+)
+
+onMounted(async () => {
+  // 如果已经有父组件数据，直接使用
+  if (homeData && homeData.petCount !== undefined && homeData.userCount !== undefined) {
+    updateData()
+    return
+  }
+  
+  // 避免重复请求
+  if (hasRequested.value) return
+  hasRequested.value = true
+  
+  // 兼容独立使用的情况，自己请求数据
+  try {
+    const [petRes, userRes] = await Promise.all([
+      getPetCountAPI(),
+      getUserCountAPI()
+    ])
+    petCount.value = petRes?.data || 0
+    userCount.value = userRes?.data || 0
+  } catch (err) {
+    console.error('获取统计数据失败:', err)
+  }
 })
 </script>
 

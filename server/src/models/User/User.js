@@ -35,7 +35,7 @@ const User = sequelize.define("User", {
     comment: '昵称'
   },
   avatar: {
-    type: DataTypes.STRING(150),
+    type: DataTypes.STRING(500),
     allowNull: false,
     defaultValue: avatar,
     comment: '头像'

@@ -5,6 +5,7 @@ const ArticleCollection = require('../models/Article/ArticleCollection')
 const ArticleStar = require('../models/Article/ArticleStar')
 const ArticleComment = require('../models/Article/ArticleComment')
 const { Op } = require('sequelize')
+const { uploadMultipleToOSS } = require('../utils/ossUpload')
 
 // 创建帖子
 exports.ArticleCreateService = async (req, res) => {
@@ -612,14 +613,14 @@ exports.ArticleGetOneAllCommentService = async (req, res) => {
     // 计算偏移量
     const offset = (page - 1) * limit
 
-    // 查询评论总数
+    // 查询评论总数（只统计status为true的评论）
     const totalComments = await ArticleComment.count({
-      where: { articleId }
+      where: { articleId, status: true }
     })
 
-    // 查询评论列表，关联用户信息
+    // 查询评论列表，关联用户信息（只显示已审核通过的评论）
     const comments = await ArticleComment.findAll({
-      where: { articleId },
+      where: { articleId, status: true },
       include: [{
         model: User,
         as: 'user',
@@ -1379,13 +1380,8 @@ exports.ArticleUploadService = async (req, res) => {
       });
     }
 
-
-
-    // 处理文件路径，生成统一的URL格式
-    const fileUrls = files.map(file => {
-      // 根据你的文件存储结构调整路径格式
-      return `/articles/uploadArticle/${file.filename}`;
-    });
+    // 批量上传到 OSS
+    const fileUrls = await uploadMultipleToOSS(files, 'articles');
 
     return res.status(200).json({
       code: 200,

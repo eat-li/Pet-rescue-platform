@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const UserService = require("../../services/UserService")
 const { PersonAuth } = require("../../middleware/auth")
-const { setAvatarDir } = require("../../middleware/sendDir.js")
 const upload = require("../../utils/upload.js")
 
 // 用户注册
@@ -26,7 +25,6 @@ router.get("/:id", UserService.UserDetailService)
 // 用户头像上传
 router.post(
   "/avatar/:id",
-  setAvatarDir("avatar/uploadUserAvatar"),
   upload.single('avatar'),
   UserService.UserUploadAvatarService
 )
