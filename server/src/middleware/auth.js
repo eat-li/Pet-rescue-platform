@@ -18,7 +18,7 @@ exports.PersonAuth = async (req, res, next) => {
     if (!authHeader || !authHeader.startsWith("Bearer")) {
       return res.status(401).json({
         code: 401,
-        message: "please give token availablily"
+        message: "请提供有效的Token"
       })
     }
     const token = authHeader.split(' ')[1]

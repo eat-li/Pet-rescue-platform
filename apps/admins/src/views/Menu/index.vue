@@ -58,12 +58,12 @@ const activeMenu = computed(() => {
 						<span>用户管理</span>
 					</el-menu-item>
 
-					<el-menu-item index="/admin/pet">
+					<!-- <el-menu-item index="/admin/pet">
 						<el-icon>
 							<Avatar />
 						</el-icon>
 						<span>宠物管理</span>
-					</el-menu-item>
+					</el-menu-item> -->
 
 					<el-menu-item index="/admin/adopt">
 						<el-icon>

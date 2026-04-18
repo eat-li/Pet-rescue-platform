@@ -1,6 +1,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { getUserBookingsAPI, cancelBookingAPI } from '@/api/service'
+import Toast from '@/components/Common/Toast.vue'
+import { useToast } from '@/hooks/Common/useToast.js'
+
+const { showToast, toastMessage, toastType, duration, showSuccess, showError, showWarning, hideToast } = useToast()
 
 // ── 数据 ─────────────────────────────────────────────────
 const bookings = ref([])
@@ -17,6 +21,17 @@ const statusMap = {
 
 const getStatusInfo = (status) =>
   statusMap[status] || { label: status, color: '#6b7280', bg: '#f9fafb', icon: '📋' }
+
+// 服务类型映射
+const serviceTypeMap = {
+  basic_care:         '基础护理',
+  beauty_styling:     '美容造型',
+  health_medical:     '健康医疗',
+  training_service:   '训练服务',
+  special_experience: '特色体验'
+}
+
+const getTypeLabel = (type) => serviceTypeMap[type] || type
 
 // 过滤后的订单
 const filteredBookings = computed(() => {
@@ -41,7 +56,7 @@ const fetchBookings = async () => {
     bookings.value = res?.data?.data || []
   } catch (err) {
     console.error('获取订单失败:', err)
-    alert('获取订单列表失败')
+    showError('获取订单列表失败')
   } finally {
     loading.value = false
   }
@@ -55,7 +70,7 @@ const cancelReason = ref('')
 
 const openCancelModal = (booking) => {
   if (booking.status !== 'pending') {
-    alert('只有待确认的订单可以取消')
+    showWarning('只有待确认的订单可以取消')
     return
   }
   cancelTarget.value = booking
@@ -76,11 +91,11 @@ const confirmCancel = async () => {
     await cancelBookingAPI(cancelTarget.value.id, {
       cancelReason: cancelReason.value || '用户取消'
     })
-    alert('订单已取消')
+    showSuccess('订单已取消')
     closeCancelModal()
     await fetchBookings()
   } catch (err) {
-    alert(err.response?.data?.message || '取消失败，请重试')
+    showError(err.response?.data?.message || '取消失败，请重试')
   } finally {
     cancellingId.value = null
   }
@@ -104,6 +119,14 @@ onMounted(fetchBookings)
 
 <template>
   <div class="orders-page">
+    <!-- Toast -->
+    <Toast
+      :show-toast="showToast"
+      :toast-message="toastMessage"
+      :toast-type="toastType"
+      :duration="duration"
+      @hide-toast="hideToast"
+    />
     <!-- 标题栏 -->
     <div class="orders-header">
       <h2 class="orders-title">📋 我的订单</h2>
@@ -180,7 +203,7 @@ onMounted(fetchBookings)
             <div class="service-detail">
               <h4 class="service-name">{{ order.service?.name || '未知服务' }}</h4>
               <p class="service-type" v-if="order.service?.type">
-                类型：{{ order.service.type }}
+                类型：{{ getTypeLabel(order.service.type) }}
               </p>
               <div class="appointment-info">
                 <span class="info-item">📅 {{ formatDate(order.appointmentDate) }}</span>
@@ -272,7 +295,6 @@ onMounted(fetchBookings)
 
 <style lang="scss" scoped>
 .orders-page {
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -377,8 +399,6 @@ onMounted(fetchBookings)
 
 // ── 订单列表 ──────────────────────────────────────────────
 .orders-list {
-  flex: 1;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 12px;

@@ -148,7 +148,7 @@ const goMyPets = () => {
     <!-- 汉堡菜单和logo -->
     <div class="navbar-start">
       <div class="dropdown">
-        <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+        <div tabindex="0" role="button" class="btn btn-ghost lg:hidden" aria-label="打开导航菜单">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
           </svg>
@@ -156,29 +156,29 @@ const goMyPets = () => {
         <!-- 修改汉堡菜单下拉内容 -->
         <ul tabindex="0"
           class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-64 max-w-[calc(100vw-2rem)] p-3 shadow-lg border mobile-menu">
-          <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click="scrollToNotice">最新公告</a>
+          <li><a href="/" class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click.prevent="scrollToNotice">最新公告</a>
           </li>
-          <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click="router.push('/adopt')">宠物领养</a></li>
-          <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click="router.push('/posts')">宠物社区</a></li>
-          <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click="router.push('/service')">宠物服务</a></li>
+          <li><a href="/adopt" class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click.prevent="router.push('/adopt')">宠物领养</a></li>
+          <li><a href="/posts" class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click.prevent="router.push('/posts')">宠物社区</a></li>
+          <li><a href="/service" class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click.prevent="router.push('/service')">宠物服务</a></li>
           <!-- 登录状态下的移动端菜单 -->
           <template v-if="isLogin">
             <div class="divider my-2"></div>
-            <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click="goMyPets">我的宠物</a></li>
-            <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click="goProfile">个人中心</a></li>
-            <li><a class="hover:bg-red-50 hover:text-red-600 py-3 px-4 text-base" @click="goLoginOut">退出登录</a></li>
+            <li><a href="/pet" class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click.prevent="goMyPets">我的宠物</a></li>
+            <li><a href="/profile" class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base" @click.prevent="goProfile">个人中心</a></li>
+            <li><a href="/" class="hover:bg-red-50 hover:text-red-600 py-3 px-4 text-base" @click.prevent="goLoginOut">退出登录</a></li>
           </template>
           <!-- 未登录状态下的移动端登录注册按钮 -->
           <template v-if="!isLogin">
             <div class="divider my-2"></div>
-            <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base font-medium"
-                @click="GoLogin">登录</a></li>
-            <li><a class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base font-medium"
-                @click="GoRegister">注册</a></li>
+            <li><a href="/login" class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base font-medium"
+                @click.prevent="GoLogin">登录</a></li>
+            <li><a href="/register" class="hover:bg-orange-50 hover:text-orange-600 py-3 px-4 text-base font-medium"
+                @click.prevent="GoRegister">注册</a></li>
           </template>
         </ul>
       </div>
-      <a class="btn btn-ghost text-xl font-bold">
+      <a href="/" class="btn btn-ghost text-xl font-bold">
         <span class="text-orange-500">🐾</span>
         <span class="text-gray-800">Pet Service</span>
       </a>
@@ -187,8 +187,8 @@ const goMyPets = () => {
     <!-- 中间菜单 -->
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal px-1 gap-5">
-        <li><a class="text-gray-900 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"
-            @click="scrollToNotice">最新公告</a></li>
+        <li><a href="/" class="text-gray-900 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"
+            @click.prevent="scrollToNotice">最新公告</a></li>
         <li><router-link to="/adopt"
             class="text-gray-900 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300">宠物领养</router-link>
         </li>
@@ -209,11 +209,11 @@ const goMyPets = () => {
         <!-- 未登录状态 -->
         <template v-if="!isLogin">
           <button @click="GoLogin"
-            class="btn btn-outline btn-sm lg:btn-md text-orange-500 border-orange-500 hover:bg-orange-500 hover:text-white transition-all duration-300 w-20 lg:w-28 hidden sm:flex">
+            class="btn btn-outline btn-sm lg:btn-md text-orange-700 border-orange-700 hover:bg-orange-700 hover:text-white transition-all duration-300 w-20 lg:w-28 hidden sm:flex">
             登录
           </button>
           <button @click="GoRegister"
-            class="btn btn-sm lg:btn-md bg-orange-500 text-white hover:bg-orange-600 border-none shadow-md transition-all duration-300 w-20 lg:w-28 hidden sm:flex">
+            class="btn btn-sm lg:btn-md bg-orange-700 text-white hover:bg-orange-800 border-none shadow-md transition-all duration-300 w-20 lg:w-28 hidden sm:flex">
             注册
           </button>
         </template>

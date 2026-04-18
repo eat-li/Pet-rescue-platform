@@ -7,7 +7,7 @@ const storage = multer.memoryStorage()
 const upload = multer({
   storage,
   limits: {
-    fileSize: 1024 * 1024 * 5, // 限制文件大小5MB
+    fileSize: 1024 * 1024 * 10, // 限制文件大小10MB
   },
   fileFilter: (req, file, cb) => {
     // 限制文件类型

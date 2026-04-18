@@ -652,7 +652,12 @@ exports.UpdateApplicationStatusService = async (req, res) => {
 
     // 若批准：同步更新领养帖状态，并拒绝其他待处理申请
     if (status === 'approved') {
-      await application.adoption.update({ status: 'approved' })
+      // 检查关联的领养帖子是否存在
+      if (application.adoption) {
+        await application.adoption.update({ status: 'approved' })
+      } else {
+        console.warn(`申请 ${appId} 关联的领养帖子不存在，adoptionId: ${application.adoptionId}`)
+      }
       const { Op } = require('sequelize')
       await AdoptionApplication.update(
         { status: 'rejected' },

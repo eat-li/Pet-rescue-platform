@@ -295,19 +295,24 @@ const handleFileChange = (event) => {
           </div>
         </div>
 
-        <!-- 旧密码 -->
-        <div class="info-item" v-if="isEditing">
-          <label class="info-label">旧密码：</label>
-          <div class="info-value">
-            <input v-model="userInfo.oldPassword" type="password" class="edit-input" placeholder="请输入旧密码" />
-          </div>
-        </div>
-
-        <!-- 新密码 -->
-        <div class="info-item" v-if="isEditing">
-          <label class="info-label">新密码：</label>
-          <div class="info-value">
-            <input v-model="userInfo.password" type="password" class="edit-input" placeholder="请输入新密码" />
+        <!-- 修改密码（可选） -->
+        <div class="info-item password-section" v-if="isEditing">
+          <label class="info-label">修改密码：</label>
+          <div class="info-value password-inputs">
+            <input 
+              v-model="userInfo.oldPassword" 
+              type="password" 
+              class="edit-input" 
+              placeholder="旧密码（留空则不修改）"
+              autocomplete="new-password"
+            />
+            <input 
+              v-model="userInfo.password" 
+              type="password" 
+              class="edit-input" 
+              placeholder="新密码（留空则不修改）"
+              autocomplete="new-password"
+            />
           </div>
         </div>
       </div>
@@ -538,6 +543,22 @@ const handleFileChange = (event) => {
           box-shadow: 0 0 0 2px rgba(252, 183, 0, 0.1);
         }
       }
+
+      // 密码输入框并排
+      &.password-inputs {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+
+        .edit-input {
+          flex: 1;
+        }
+      }
+    }
+
+    // 密码区域样式
+    &.password-section {
+      background: #fafafa;
     }
   }
 }

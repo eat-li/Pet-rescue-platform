@@ -90,45 +90,42 @@ onMounted(() => fetchList(1))
       :duration="duration"
       @hide-toast="hideToast"
     />
-    <!-- Hero 横幅 -->
-    <div class="hero-banner">
-      <div class="hero-content">
-        <div class="hero-nav">
-          <button class="home-btn" @click="router.push('/')">
-            ← 返回首页
-          </button>
-        </div>
-        <div class="hero-badge">宠物服务中心</div>
-        <h1 class="hero-title">🐾 专业护理 · 贴心服务</h1>
-        <p class="hero-desc">为您的毛孩子提供全方位专业宠物服务，每一次服务都是一次爱的呵护</p>
-        <div v-if="!loading" class="hero-stats">
-          <div class="stat-item">
-            <span class="stat-num">{{ pagination.totalItems }}</span>
-            <span class="stat-label">项服务</span>
-          </div>
-        </div>
+    <!-- 顶部导航 -->
+    <nav class="top-nav">
+      <div class="nav-inner">
+        <button class="back-btn" @click="router.push('/')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          返回首页
+        </button>
+        <span class="nav-title">宠物服务</span>
+        <button class="nav-cart-btn" @click="router.push('/profile/cart')">
+          购物车
+        </button>
+      </div>
+    </nav>
+
+    <!-- 标题区 -->
+    <div class="page-header">
+      <div class="header-inner">
+        <h1>专业护理，贴心服务</h1>
+        <p>目前共有 <strong>{{ pagination.totalItems }}</strong> 项服务</p>
       </div>
     </div>
 
     <div class="main-content">
-      <!-- 工具栏：类型筛选 + 购物车入口 -->
-      <div class="toolbar">
-        <div class="filter-bar">
-          <span class="filter-label">服务类型</span>
-          <div class="filter-tabs">
-            <button
-              v-for="opt in typeOptions"
-              :key="opt.value"
-              :class="['filter-tab', { active: activeType === opt.value }]"
-              @click="activeType = opt.value"
-            >
-              {{ opt.icon }} {{ opt.label }}
-            </button>
-          </div>
+      <!-- 筛选栏 -->
+      <div class="filter-bar">
+        <span class="filter-label">服务类型</span>
+        <div class="filter-tabs">
+          <button
+            v-for="opt in typeOptions"
+            :key="opt.value"
+            :class="['filter-tab', { active: activeType === opt.value }]"
+            @click="activeType = opt.value"
+          >
+            {{ opt.icon }} {{ opt.label }}
+          </button>
         </div>
-        <button class="cart-entry" @click="router.push('/profile/cart')">
-          🛒 购物车
-        </button>
       </div>
 
       <!-- 结果提示 -->
@@ -197,105 +194,94 @@ onMounted(() => fetchList(1))
   background: #f8f9fb;
 }
 
-.hero-banner {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
-  padding: 40px 20px;
-  color: white;
+// ── 顶部导航 ────────────────────────────────────────────
+.top-nav {
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.hero-content {
+.nav-inner {
   max-width: 1100px;
   margin: 0 auto;
-  text-align: center;
-  position: relative;
-}
-
-.hero-nav {
+  padding: 0 20px;
+  height: 48px;
   display: flex;
-  justify-content: flex-start;
-  margin-bottom: 16px;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.home-btn {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: rgba(255, 255, 255, 0.85);
-  padding: 6px 14px;
-  border-radius: 20px;
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #6b7280;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s;
-  backdrop-filter: blur(4px);
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.15s;
+
   &:hover {
-    background: rgba(255, 255, 255, 0.25);
-    color: white;
-    border-color: rgba(255, 255, 255, 0.5);
+    color: #8b5cf6;
+    background: #f5f3ff;
   }
 }
 
-.hero-badge {
-  display: inline-block;
-  padding: 4px 14px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  font-size: 12px;
+.nav-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.nav-cart-btn {
+  padding: 6px 16px;
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 12px;
-  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover { background: #7c3aed; }
 }
 
-.hero-title {
-  font-size: 26px;
-  font-weight: 800;
-  margin: 0 0 8px;
-  line-height: 1.3;
+// ── 标题区 ──────────────────────────────────────────────
+.page-header {
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.hero-desc {
-  font-size: 14px;
-  opacity: 0.9;
-  margin: 0 0 20px;
-  line-height: 1.6;
-}
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 20px 24px;
 
-.hero-stats {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  .stat-item { display: flex; flex-direction: column; gap: 2px; }
-  .stat-num  { font-size: 24px; font-weight: 800; }
-  .stat-label { font-size: 12px; opacity: 0.85; }
+  h1 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin: 0 0 6px;
+  }
+
+  p {
+    font-size: 14px;
+    color: #9ca3af;
+    margin: 0;
+    strong { color: #8b5cf6; font-weight: 600; }
+  }
 }
 
 .main-content {
   max-width: 1100px;
   margin: 0 auto;
   padding: 32px 20px 60px;
-}
-
-.toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.cart-entry {
-  flex-shrink: 0;
-  padding: 12px 20px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
-  }
 }
 
 .filter-bar {
@@ -307,7 +293,7 @@ onMounted(() => fetchList(1))
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  flex: 1;
+  margin-bottom: 24px;
 }
 
 .filter-label {

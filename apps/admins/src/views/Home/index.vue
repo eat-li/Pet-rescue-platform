@@ -44,12 +44,12 @@ const updateTime = () => {
 
 // ===== 卡片配置 =====
 const statCards = [
-  { key: 'users',     label: '注册用户', icon: User,        color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe' },
-  { key: 'articles',  label: '社区帖子', icon: Document,    color: '#10b981', bg: '#ecfdf5', border: '#a7f3d0' },
-  { key: 'services',  label: '服务项目', icon: Setting,     color: '#8470FF', bg: '#f5f3ff', border: '#ddd6fe' },
-  { key: 'bookings',  label: '服务预约', icon: Calendar,    color: '#f59e0b', bg: '#fffbeb', border: '#fde68a' },
-  { key: 'adoptions', label: '领养信息', icon: StarFilled,  color: '#ef4444', bg: '#fef2f2', border: '#fecaca' },
-  { key: 'notices',   label: '系统公告', icon: Bell,        color: '#06b6d4', bg: '#ecfeff', border: '#a5f3fc' },
+  { key: 'users',     label: '注册用户', icon: User,        color: '#2563eb' },
+  { key: 'articles',  label: '社区帖子', icon: Document,    color: '#059669' },
+  { key: 'services',  label: '服务项目', icon: Setting,     color: '#7c3aed' },
+  { key: 'bookings',  label: '服务预约', icon: Calendar,    color: '#d97706' },
+  { key: 'adoptions', label: '领养信息', icon: StarFilled,  color: '#dc2626' },
+  { key: 'notices',   label: '系统公告', icon: Bell,        color: '#0891b2' },
 ]
 
 // ===== ECharts =====
@@ -88,10 +88,10 @@ const initBookingChart = () => {
         scaleSize: 8
       },
       data: [
-        { value: bookingDetail.value.pending,   name: '待确认', itemStyle: { color: '#f59e0b' } },
-        { value: bookingDetail.value.confirmed,  name: '已确认', itemStyle: { color: '#3b82f6' } },
-        { value: bookingDetail.value.completed,  name: '已完成', itemStyle: { color: '#10b981' } },
-        { value: bookingDetail.value.cancelled,  name: '已取消', itemStyle: { color: '#ef4444' } },
+        { value: bookingDetail.value.pending,   name: '待确认', itemStyle: { color: '#d97706' } },
+        { value: bookingDetail.value.confirmed,  name: '已确认', itemStyle: { color: '#2563eb' } },
+        { value: bookingDetail.value.completed,  name: '已完成', itemStyle: { color: '#059669' } },
+        { value: bookingDetail.value.cancelled,  name: '已取消', itemStyle: { color: '#dc2626' } },
       ]
     }]
   })
@@ -120,9 +120,9 @@ const initAdoptionChart = () => {
     series: [{
       type: 'bar', barMaxWidth: 56,
       data: [
-        { value: adoptionDetail.value.pending,  itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0,color:'#fbbf24'},{offset:1,color:'#f59e0b'}]), borderRadius: [6,6,0,0] } },
-        { value: adoptionDetail.value.approved, itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0,color:'#34d399'},{offset:1,color:'#10b981'}]), borderRadius: [6,6,0,0] } },
-        { value: adoptionDetail.value.rejected, itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0,color:'#f87171'},{offset:1,color:'#ef4444'}]), borderRadius: [6,6,0,0] } },
+        { value: adoptionDetail.value.pending,  itemStyle: { color: '#d97706', borderRadius: [4,4,0,0] } },
+        { value: adoptionDetail.value.approved, itemStyle: { color: '#059669', borderRadius: [4,4,0,0] } },
+        { value: adoptionDetail.value.rejected, itemStyle: { color: '#dc2626', borderRadius: [4,4,0,0] } },
       ],
       label: { show: true, position: 'top', color: '#6b7280', fontSize: 13, fontWeight: '600' }
     }]
@@ -133,7 +133,6 @@ const initOverviewChart = () => {
   if (!overviewChartEl.value) return
   if (overviewChart) overviewChart.dispose()
   overviewChart = echarts.init(overviewChartEl.value)
-  const colors = ['#3b82f6', '#10b981', '#8470FF', '#f59e0b', '#ef4444', '#06b6d4']
   overviewChart.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     grid: { left: '3%', right: '3%', bottom: '10%', top: '14%', containLabel: true },
@@ -142,7 +141,7 @@ const initOverviewChart = () => {
       data: ['注册用户', '社区帖子', '服务项目', '服务预约', '领养信息', '系统公告'],
       axisLine: { lineStyle: { color: '#e5e7eb' } },
       axisTick: { show: false },
-      axisLabel: { color: '#6b7280', fontSize: 13 }
+      axisLabel: { color: '#6b7280', fontSize: 12 }
     },
     yAxis: {
       type: 'value', minInterval: 1,
@@ -151,16 +150,17 @@ const initOverviewChart = () => {
       splitLine: { lineStyle: { color: '#f3f4f6', type: 'dashed' } }
     },
     series: [{
-      type: 'bar', barMaxWidth: 64,
+      type: 'bar', barMaxWidth: 48,
+      itemStyle: { color: '#3b82f6', borderRadius: [4,4,0,0] },
       data: [
-        { value: stats.value.users,     itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#60a5fa'},{offset:1,color:'#3b82f6'}]), borderRadius:[6,6,0,0] } },
-        { value: stats.value.articles,  itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#34d399'},{offset:1,color:'#10b981'}]), borderRadius:[6,6,0,0] } },
-        { value: stats.value.services,  itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#a78bfa'},{offset:1,color:'#8470FF'}]), borderRadius:[6,6,0,0] } },
-        { value: stats.value.bookings,  itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#fbbf24'},{offset:1,color:'#f59e0b'}]), borderRadius:[6,6,0,0] } },
-        { value: stats.value.adoptions, itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#f87171'},{offset:1,color:'#ef4444'}]), borderRadius:[6,6,0,0] } },
-        { value: stats.value.notices,   itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#22d3ee'},{offset:1,color:'#06b6d4'}]), borderRadius:[6,6,0,0] } },
+        stats.value.users,
+        stats.value.articles,
+        stats.value.services,
+        stats.value.bookings,
+        stats.value.adoptions,
+        stats.value.notices,
       ],
-      label: { show: true, position: 'top', fontSize: 13, fontWeight: '600',
+      label: { show: true, position: 'top', fontSize: 12, fontWeight: '500',
         formatter: (p) => p.value > 0 ? p.value : '' ,
         color: '#374151'
       }
@@ -360,61 +360,64 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 14px;
-  padding: 22px 28px;
-  color: #fff;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.35);
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px 24px;
+  border: 1px solid #e5e7eb;
 }
 
 .welcome-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .welcome-avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.25);
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: #f3f4f6;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  color: #6b7280;
 }
 
 .welcome-title {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.3;
-  .admin-name { color: #fde68a; }
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #111827;
+  .admin-name { color: #2563eb; }
 }
 
 .welcome-sub {
   font-size: 13px;
-  opacity: 0.85;
-  margin-top: 4px;
+  color: #6b7280;
+  margin-top: 2px;
 }
 
 .welcome-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .time-display {
   font-size: 13px;
-  opacity: 0.9;
+  color: #6b7280;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .refresh-btn {
-  border-color: rgba(255,255,255,0.5) !important;
-  background: rgba(255,255,255,0.15) !important;
-  color: #fff !important;
-  &:hover { background: rgba(255,255,255,0.28) !important; }
+  border-color: #d1d5db !important;
+  color: #6b7280 !important;
+  &:hover { 
+    border-color: #9ca3af !important;
+    color: #374151 !important;
+  }
 }
 
 /* ===== 统计卡片 ===== */
@@ -425,33 +428,32 @@ onUnmounted(() => {
 }
 
 .stat-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 18px 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: 12px;
+  transition: border-color 0.2s ease;
   cursor: default;
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+    border-color: #d1d5db;
   }
 }
 
 .card-icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  background: var(--card-color);
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #fff;
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--card-color) 40%, transparent);
+  color: var(--card-color);
 }
 
 .card-body {
@@ -460,17 +462,17 @@ onUnmounted(() => {
 }
 
 .card-num {
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--card-color);
-  line-height: 1.1;
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
 
 .card-label {
   font-size: 12px;
-  color: #9ca3af;
-  margin-top: 3px;
+  color: #6b7280;
+  margin-top: 2px;
   white-space: nowrap;
 }
 
@@ -478,15 +480,14 @@ onUnmounted(() => {
 .charts-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
 .chart-card {
   background: #fff;
-  border-radius: 14px;
-  padding: 20px 24px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
 }
 
 .overview-card {
@@ -498,19 +499,21 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
   margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .chart-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1f2937;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
 }
 
 .chart-sub {
   font-size: 12px;
-  color: #9ca3af;
+  color: #6b7280;
 }
 
 .chart-badges {
@@ -521,26 +524,25 @@ onUnmounted(() => {
 
 .badge {
   font-size: 12px;
-  padding: 2px 10px;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--bc) 12%, transparent);
-  color: var(--bc);
-  border: 1px solid color-mix(in srgb, var(--bc) 30%, transparent);
-  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 400;
   white-space: nowrap;
 }
 
 .chart-area {
   width: 100%;
-  height: 280px;
+  height: 260px;
 }
 
 .overview-chart-area {
-  height: 260px;
+  height: 240px;
 }
 
 /* ===== 深色表格兼容 ===== */
 :deep(.el-loading-mask) {
-  border-radius: 14px;
+  border-radius: 8px;
 }
 </style>

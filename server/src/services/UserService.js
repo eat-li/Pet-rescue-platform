@@ -561,10 +561,10 @@ exports.UserUploadAvatarService = async (req, res) => {
     const { id } = req.params
     const file = req.file
     // 如果文件未上传
-    if (!file) return res.status(400).json({ msg: '请上传文件' })
+    if (!file) return res.status(400).json({ code: 400, message: '请上传文件' })
     //查看用户是否存在
     const user = await User.findByPk(id)
-    if (!user) return res.status(404).json({ msg: '用户不存在' })
+    if (!user) return res.status(404).json({ code: 404, message: '用户不存在' })
 
     // 上传到 OSS
     const avatarUrl = await uploadToOSS(file.buffer, file.originalname, `avatar/user/${id}`)
@@ -573,7 +573,7 @@ exports.UserUploadAvatarService = async (req, res) => {
     await user.update({ avatar: avatarUrl })
     res.status(200).json({
       code: 200,
-      msg: '更新用户头像成功',
+      message: '更新用户头像成功',
       data: {
         avatar: avatarUrl
       }

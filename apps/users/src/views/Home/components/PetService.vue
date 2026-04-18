@@ -53,6 +53,17 @@ onMounted(() => {
 
 const goService = (id) => router.push(`/service/${id}`)
 const goServiceList = () => router.push('/service')
+
+// 服务类型映射
+const serviceTypeMap = {
+  basic_care:         '基础护理',
+  beauty_styling:     '美容造型',
+  health_medical:     '健康医疗',
+  training_service:   '训练服务',
+  special_experience: '特色体验'
+}
+
+const getTypeLabel = (type) => serviceTypeMap[type] || type
 </script>
 
 <template>
@@ -100,7 +111,7 @@ const goServiceList = () => router.push('/service')
           
           <div class="card-body">
             <div class="card-type-badge">
-              {{ item.type }}
+              {{ getTypeLabel(item.type) }}
             </div>
             <h4 class="card-name">{{ item.name }}</h4>
             <p class="card-desc">{{ item.content }}</p>

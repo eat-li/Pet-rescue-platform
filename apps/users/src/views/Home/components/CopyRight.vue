@@ -27,7 +27,7 @@ const currentYear = new Date().getFullYear()
       <!-- 右侧链接 -->
       <div class="footer-right">
         <nav class="footer-nav">
-          <h6 class="nav-title">平台功能</h6>
+          <h3 class="nav-title">平台功能</h3>
           <router-link to="/pets">宠物领养</router-link>
           <router-link to="/service">宠物服务</router-link>
           <router-link to="/posts">宠物社区</router-link>
@@ -35,17 +35,17 @@ const currentYear = new Date().getFullYear()
         </nav>
 
         <nav class="footer-nav">
-          <h6 class="nav-title">个人中心</h6>
+          <h3 class="nav-title">个人中心</h3>
           <router-link to="/profile/cart">购物车</router-link>
           <router-link to="/profile/record">我的记录</router-link>
           <router-link to="/profile/settings">个人设置</router-link>
         </nav>
 
         <nav class="footer-nav">
-          <h6 class="nav-title">联系方式</h6>
+          <h3 class="nav-title">联系方式</h3>
           <a href="mailto:contact@petplatform.com">联系我们</a>
-          <a href="#">帮助中心</a>
-          <a href="#">隐私政策</a>
+          <a href="/help">帮助中心</a>
+          <a href="/privacy">隐私政策</a>
         </nav>
       </div>
     </div>

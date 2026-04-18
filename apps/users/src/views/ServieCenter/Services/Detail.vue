@@ -134,21 +134,35 @@ onMounted(fetchDetail)
     <div v-else-if="error || !service" class="error-state">
       <div>😿</div>
       <p>{{ error || '服务不存在' }}</p>
-      <button class="back-btn" @click="router.back()">返回</button>
+      <button class="error-back-btn" @click="router.back()">返回</button>
     </div>
 
     <!-- 正文 -->
     <template v-else>
-      <!-- 顶部横幅 -->
-      <div class="detail-banner" :style="{ background: `linear-gradient(135deg, ${typeInfo.color}dd, ${typeInfo.color}99)` }">
-        <div class="banner-inner">
-          <button class="go-back" @click="router.back()">← 返回</button>
-          <div class="banner-info">
-            <div class="type-badge" :style="{ background: 'rgba(255,255,255,0.2)', color: 'white' }">
+      <!-- 顶部导航 -->
+      <nav class="top-nav">
+        <div class="nav-inner">
+          <button class="back-btn" @click="router.back()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            返回列表
+          </button>
+          <span class="nav-title">{{ service.name }}</span>
+          <span class="nav-price">¥{{ service.price }}</span>
+        </div>
+      </nav>
+
+      <!-- 标题区 -->
+      <div class="page-header">
+        <div class="header-inner">
+          <div class="header-left">
+            <span class="type-badge" :style="{ color: typeInfo.color, background: typeInfo.bg }">
               {{ typeInfo.icon }} {{ typeInfo.label }}
-            </div>
+            </span>
             <h1>{{ service.name }}</h1>
-            <div class="banner-price">¥{{ service.price }} <span>起</span></div>
+          </div>
+          <div class="header-right">
+            <span class="header-price">¥{{ service.price }} <span>起</span></span>
+            <span class="weight-tip">≤ {{ service.weight }} kg</span>
           </div>
         </div>
       </div>
@@ -276,7 +290,7 @@ onMounted(fetchDetail)
               <div>时段：{{ form.appointmentTime }}</div>
               <div>联系：{{ form.contact }}</div>
             </div>
-            <button class="back-btn" @click="router.push('/service')">返回服务列表</button>
+            <button class="success-back-btn" @click="router.push('/service')">返回服务列表</button>
           </div>
         </div>
       </div>
@@ -300,44 +314,139 @@ onMounted(fetchDetail)
   p { font-size: 16px; color: #9ca3af; margin: 16px 0; }
   .loading-icon { animation: bounce 1.2s ease-in-out infinite; }
 }
+
+.error-back-btn {
+  padding: 10px 24px;
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  &:hover { background: #7c3aed; }
+}
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-// 顶部横幅
-.detail-banner {
-  padding: 48px 20px 40px;
-  color: white;
+// ── 顶部导航 ────────────────────────────────────────────
+.top-nav {
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
-.banner-inner {
+
+.nav-inner {
   max-width: 1100px;
   margin: 0 auto;
+  padding: 0 20px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.go-back {
-  background: rgba(255,255,255,0.2);
-  border: 1px solid rgba(255,255,255,0.4);
-  color: white;
-  padding: 6px 16px;
-  border-radius: 8px;
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 13px;
   cursor: pointer;
-  font-size: 14px;
-  margin-bottom: 20px;
-  &:hover { background: rgba(255,255,255,0.3); }
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.15s;
+
+  &:hover {
+    color: #8b5cf6;
+    background: #f5f3ff;
+  }
 }
-.banner-info {
-  h1 { font-size: 28px; font-weight: 800; margin: 12px 0 8px; }
+
+.nav-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a2e;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
+.nav-price {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ef4444;
+}
+
+// ── 标题区 ──────────────────────────────────────────────
+.page-header {
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+
+  h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .type-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
+  flex-shrink: 0;
 }
-.banner-price {
-  font-size: 32px;
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.header-price {
+  font-size: 24px;
   font-weight: 800;
-  span { font-size: 14px; font-weight: 400; opacity: 0.8; }
+  color: #ef4444;
+  span { font-size: 13px; font-weight: 400; color: #9ca3af; }
+}
+
+.weight-tip {
+  font-size: 13px;
+  color: #9ca3af;
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 20px;
 }
 
 // 主体布局
@@ -531,7 +640,7 @@ onMounted(fetchDetail)
   margin-bottom: 20px;
   div { font-size: 13px; color: #374151; padding: 4px 0; }
 }
-.back-btn {
+.success-back-btn {
   width: 100%;
   padding: 12px;
   background: #16a34a;

@@ -1,11 +1,15 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
+// OSS banner 图片地址
+const OSS_BASE_URL = 'https://pet-server-asset.oss-cn-chengdu.aliyuncs.com'
+
 const carouselImages = [
-  'https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.webp',
-  'https://img.daisyui.com/images/stock/photo-1609621838510-5ad474b7d25d.webp',
-  'https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.webp',
-  'https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp'
+  `${OSS_BASE_URL}/banners/banner1.webp`,
+  `${OSS_BASE_URL}/banners/banner2.webp`,
+  `${OSS_BASE_URL}/banners/banner3.webp`,
+  `${OSS_BASE_URL}/banners/banner4.webp`,
+  `${OSS_BASE_URL}/banners/banner5.webp`
 ]
 
 const currentSlide = ref(0)
@@ -97,7 +101,7 @@ onUnmounted(() => {
               :loading="index === 0 ? 'eager' : 'lazy'"
               :class="{ 'zoom-active': index === currentSlide }" />
             <!-- 添加遮罩层 -->
-            <div class="image-overlay"></div>
+            <!-- <div class="image-overlay"></div> -->
           </div>
         </div>
       </div>
@@ -124,7 +128,7 @@ onUnmounted(() => {
         class="carousel-dot transition-all duration-300 ease-in-out" :class="{
           'active': index === currentSlide,
           'opacity-50 cursor-not-allowed': isTransitioning
-        }">
+        }" :aria-label="`切换到第 ${index + 1} 张轮播图`" :aria-current="index === currentSlide ? 'true' : 'false'">
       </button>
     </div>
   </section>
@@ -244,26 +248,40 @@ section {
 
 /* 圆点基础样式 */
 .carousel-dot {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0;
+}
+
+/* 圆点内部的实际圆点 */
+.carousel-dot::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 12px;
   height: 12px;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.5);
   border: 2px solid rgba(255, 255, 255, 0.8);
-  cursor: pointer;
   transition: all 0.3s ease;
 }
 
 /* 圆点悬停效果 */
-.carousel-dot:hover:not(:disabled) {
+.carousel-dot:hover:not(:disabled)::before {
   background-color: rgba(255, 255, 255, 0.8);
-  transform: scale(1.1);
+  transform: translate(-50%, -50%) scale(1.1);
 }
 
 /* 活动状态的圆点样式 */
-.carousel-dot.active {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+.carousel-dot.active::before {
   background-color: #fff;
   border-color: #fff;
 }
