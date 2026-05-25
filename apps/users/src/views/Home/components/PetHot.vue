@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { getArticleListAPI } from '@/api/article'
 import { baseURL } from '../../../http/http.js'
 import { formatImageUrl } from '../../../utils/imgformat.js'
+import { FireIcon, HeartIcon } from '../../../components/Icons'
 
 const router = useRouter()
 
@@ -91,7 +92,10 @@ const stripHtml = (html) => {
     <!-- 区块标题 -->
     <div class="section-header">
       <div class="header-left">
-        <span class="section-badge">🔥 热门</span>
+        <span class="section-badge">
+          <FireIcon :size="16" color="#f97316" />
+          热门
+        </span>
         <h2 class="section-title">热门帖子</h2>
         <p class="section-sub">发现社区最受欢迎的宠物故事</p>
       </div>
@@ -144,7 +148,8 @@ const stripHtml = (html) => {
 
           <!-- 热度标签 -->
           <div class="hot-badge">
-            <span>❤️ {{ item.star || 0 }}</span>
+            <HeartIcon :size="12" color="#fff" />
+            <span>{{ item.star || 0 }}</span>
           </div>
 
           <!-- 底部内容区域 -->

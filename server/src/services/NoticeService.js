@@ -302,19 +302,28 @@ exports.NoticeStatusUpdateService = async (req, res) => {
       });
     }
     const {status} = req.body
-    if (!status) {
+    if (status === undefined || status === null) {
       return res.status(400).json({
         code: 400,
         message: '缺少状态参数'
       });
     }
 
-    if (status !== 'true' && status !== 'false') {
+    // 将字符串转换为布尔值
+    let booleanStatus
+    if (typeof status === 'boolean') {
+      booleanStatus = status
+    } else if (status === 'true') {
+      booleanStatus = true
+    } else if (status === 'false') {
+      booleanStatus = false
+    } else {
       return res.status(400).json({
         code: 400,
-        message: '状态参数错误'
+        message: '状态参数必须为布尔值（true/false）'
       });
     }
+
     const notice = await Notice.findByPk(id)
     if (!notice) {
       return res.status(404).json({
@@ -322,7 +331,7 @@ exports.NoticeStatusUpdateService = async (req, res) => {
         message: '公告不存在或已被删除'
       });
     }
-    notice.status = status
+    notice.status = booleanStatus
     await notice.save()
     return res.status(200).json({
       code: 200,

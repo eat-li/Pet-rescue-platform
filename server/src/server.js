@@ -5,12 +5,33 @@ const path = require('path')
 const mainRouter = require("./routes/index.js")
 const { globalErrorHandler } = require("./middleware/errorHandler")
 
+// CORS 白名单配置
+const allowedOrigins = config.CORS_ORIGINS ? config.CORS_ORIGINS.split(',') : [
+  'http://localhost:5173',  // Vite 默认开发端口
+  'http://localhost:8080',   // 用户前端开发端口
+  'http://localhost:3000'    // 本地测试
+]
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // 允许没有 origin 的请求（如移动应用、Postman）
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('CORS 不允许此来源访问'))
+    }
+  },
+  credentials: true,  // 允许携带 cookie
+  optionsSuccessStatus: 200
+}
+
 // express
 const app = express()
 app.use(express.static(path.resolve(__dirname, "static")))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' })) // 解析表单数据
-app.use(cors())
+app.use(cors(corsOptions))
 
 // 总路由
 app.use("/api", mainRouter)

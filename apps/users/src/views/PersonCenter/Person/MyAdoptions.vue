@@ -10,6 +10,8 @@ import {
 } from '../../../api/adoption'
 import Toast from '../../../components/Common/Toast.vue'
 import { useToast } from '../../../hooks/Common/useToast.js'
+import { markRaw } from 'vue'
+import { HeartIcon, PawIcon, PhoneIcon, CheckIcon, CloseIcon, UserIcon, CalendarIcon, ClipboardIcon } from '../../../components/Icons'
 
 const router = useRouter()
 const {
@@ -211,14 +213,14 @@ onMounted(() => {
         :class="{ active: activeTab === 'my-applications' }"
         @click="switchTab('my-applications')"
       >
-        💌 我的申请
+        <HeartIcon :size="15" /> 我的申请
       </button>
       <button
         class="tab-btn"
         :class="{ active: activeTab === 'my-posts' }"
         @click="switchTab('my-posts')"
       >
-        🐾 我的发布
+        <PawIcon :size="15" /> 我的发布
         <span v-if="pendingCount > 0" class="pending-badge">{{ pendingCount }}</span>
       </button>
     </div>
@@ -327,8 +329,8 @@ onMounted(() => {
                   <div class="applicant-detail">
                     <div class="applicant-name">{{ app.name }}</div>
                     <div class="applicant-meta">
-                      <span>📞 {{ app.phone }}</span>
-                      <span v-if="app.experience">🐕 {{ experienceMap[app.experience] }}</span>
+                      <span><PhoneIcon :size="12" /> {{ app.phone }}</span>
+                      <span v-if="app.experience"><PawIcon :size="12" /> {{ experienceMap[app.experience] }}</span>
                     </div>
                     <div v-if="app.reason" class="applicant-reason">
                       "{{ app.reason }}"
@@ -343,10 +345,10 @@ onMounted(() => {
                 </div>
                 <div v-if="app.status === 'pending' && adoption.status === 'pending'" class="review-actions">
                   <button class="approve-btn" @click="handleReview(app.id, 'approved', adoption.id)">
-                    ✅ 通过
+                    <CheckIcon :size="14" /> 通过
                   </button>
                   <button class="reject-btn" @click="handleReview(app.id, 'rejected', adoption.id)">
-                    ❌ 拒绝
+                    <CloseIcon :size="14" /> 拒绝
                   </button>
                 </div>
               </div>
@@ -400,7 +402,7 @@ onMounted(() => {
 
           <!-- 宠物基本信息 -->
           <div class="adopt-detail-section">
-            <h4 class="adopt-detail-section-title">🐾 宠物信息</h4>
+            <h4 class="adopt-detail-section-title"><PawIcon :size="14" /> 宠物信息</h4>
             <div class="adopt-detail-grid">
               <div class="adopt-detail-item">
                 <span class="label">昵称</span>
@@ -424,14 +426,14 @@ onMounted(() => {
               </div>
               <div class="adopt-detail-item">
                 <span class="label">疫苗</span>
-                <span class="value">{{ detailData.pet?.vaccineStatus ? '✅ 已接种' : '❌ 未接种' }}</span>
+                <span class="value">{{ detailData.pet?.vaccineStatus ? '已接种' : '未接种' }}</span>
               </div>
             </div>
           </div>
 
           <!-- 领养信息 -->
           <div class="adopt-detail-section">
-            <h4 class="adopt-detail-section-title">📋 领养要求</h4>
+            <h4 class="adopt-detail-section-title"><ClipboardIcon :size="14" /> 领养要求</h4>
             <div class="adopt-detail-grid">
               <div class="adopt-detail-item">
                 <span class="label">领养费用</span>
@@ -450,7 +452,7 @@ onMounted(() => {
 
           <!-- 发布者信息 -->
           <div class="adopt-detail-section">
-            <h4 class="adopt-detail-section-title">👤 发布者</h4>
+            <h4 class="adopt-detail-section-title"><UserIcon :size="14" /> 发布者</h4>
             <div class="adopt-publisher-row">
               <img
                 class="adopt-publisher-avatar"
@@ -498,9 +500,12 @@ onMounted(() => {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 
-  &:hover { background: #e9d5ff; color: #7c3aed; }
-  &.active { background: #7c3aed; color: #fff; }
+  &:hover { background: #ffedd5; color: #ea580c; }
+  &.active { background: #f97316; color: #fff; }
 
   .pending-badge {
     display: inline-flex;
@@ -673,7 +678,7 @@ onMounted(() => {
   transition: all 0.2s;
   white-space: nowrap;
 
-  &:hover, &.expanded { background: #ede9fe; border-color: #7c3aed; color: #7c3aed; }
+  &:hover, &.expanded { background: #fff7ed; border-color: #f97316; color: #ea580c; }
 }
 
 /* 申请列表面板 */
@@ -734,6 +739,7 @@ onMounted(() => {
     font-size: 12px;
     color: #6b7280;
     flex-wrap: wrap;
+    align-items: center;
   }
 
   .applicant-reason {
@@ -761,6 +767,9 @@ onMounted(() => {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .approve-btn {
@@ -891,6 +900,9 @@ onMounted(() => {
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .adopt-detail-grid {

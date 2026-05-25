@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { MaleIcon, FemaleIcon, SyringeIcon, PawIcon } from '../../../components/Icons'
 
 const props = defineProps({
   petList: {
@@ -82,7 +83,9 @@ const getSexDisplay = (sex) => {
 
         <div class="info-row">
           <span class="info-item sex" :class="pet.sex ? 'male' : 'female'">
-            {{ getSexDisplay(pet.sex) }}
+            <MaleIcon v-if="pet.sex" :size="14" color="#3b82f6" />
+            <FemaleIcon v-else :size="14" color="#ec4899" />
+            {{ pet.sex ? '公' : '母' }}
           </span>
           <span class="info-item age">{{ calculateAge(pet.birthday) }}</span>
         </div>
@@ -90,7 +93,8 @@ const getSexDisplay = (sex) => {
         <!-- 疫苗状态 -->
         <div class="vaccine-row">
           <span class="info-item vaccine" :class="`vaccine-${pet.vaccineStatus}`">
-            💉 {{ vaccineStatusMap[pet.vaccineStatus] || pet.vaccineStatus }}
+            <SyringeIcon :size="14" />
+            {{ vaccineStatusMap[pet.vaccineStatus] || pet.vaccineStatus }}
           </span>
         </div>
 
@@ -123,7 +127,9 @@ const getSexDisplay = (sex) => {
 
     <!-- 空状态 -->
     <div v-if="petList.length === 0" class="empty-state">
-      <div class="empty-icon">🐾</div>
+      <div class="empty-icon">
+        <PawIcon :size="48" color="#9ca3af" />
+      </div>
       <p class="empty-text">暂无宠物信息</p>
     </div>
   </div>

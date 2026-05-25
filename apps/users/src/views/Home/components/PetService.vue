@@ -3,6 +3,7 @@ import { ref, onMounted, inject, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getServiceListAPI } from '../../../api/service.js'
 import { formatImageUrl } from '../../../utils/imgformat.js'
+import { PawIcon, BathIcon } from '../../../components/Icons'
 
 const router = useRouter()
 
@@ -105,7 +106,7 @@ const getTypeLabel = (type) => serviceTypeMap[type] || type
               class="service-img"
             >
             <div v-else class="card-image-placeholder">
-              <span>🐾</span>
+              <PawIcon :size="48" color="#9ca3af" />
             </div>
           </div>
           
@@ -121,7 +122,7 @@ const getTypeLabel = (type) => serviceTypeMap[type] || type
                 <span class="price-num">{{ item.price }}</span>
                 <span class="price-unit">起</span>
               </div>
-              <div class="card-weight">🐶 ≤{{ item.weight }}kg</div>
+              <div class="card-weight">≤{{ item.weight }}kg</div>
             </div>
             <button class="book-btn">立即预约</button>
           </div>
@@ -130,7 +131,7 @@ const getTypeLabel = (type) => serviceTypeMap[type] || type
 
       <!-- 暂无数据 -->
       <div v-else class="no-data">
-        <span>🐾</span>
+        <PawIcon :size="48" color="#9ca3af" />
         <p>暂无服务，敬请期待</p>
       </div>
     </div>
@@ -138,7 +139,8 @@ const getTypeLabel = (type) => serviceTypeMap[type] || type
     <!-- 底部 CTA -->
     <div class="section-footer">
       <button class="cta-btn" @click="goServiceList">
-        🐾 探索更多宠物服务
+        <PawIcon :size="18" color="#fff" />
+        探索更多宠物服务
       </button>
     </div>
   </section>
@@ -166,10 +168,13 @@ const getTypeLabel = (type) => serviceTypeMap[type] || type
 .header-left { flex: 1; min-width: 0; }
 
 .section-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 4px 14px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  border: 1px solid #fcd34d;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
@@ -206,9 +211,9 @@ const getTypeLabel = (type) => serviceTypeMap[type] || type
   flex-shrink: 0;
 
   &:hover {
-    border-color: #8b5cf6;
-    color: #8b5cf6;
-    background: #faf5ff;
+    border-color: #f97316;
+    color: #f97316;
+    background: #fff7ed;
   }
 }
 
@@ -425,7 +430,7 @@ const getTypeLabel = (type) => serviceTypeMap[type] || type
 .book-btn {
   width: 100%;
   padding: 9px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #f97316, #ea580c);
   color: white;
   border: none;
   border-radius: 8px;
@@ -435,7 +440,7 @@ const getTypeLabel = (type) => serviceTypeMap[type] || type
   transition: all 0.2s;
 
   &:hover {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: linear-gradient(135deg, #ea580c, #dc2626);
     transform: scale(1.02);
   }
 }
@@ -461,7 +466,7 @@ const getTypeLabel = (type) => serviceTypeMap[type] || type
 
 .cta-btn {
   padding: 14px 40px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #f97316, #ea580c);
   color: white;
   border: none;
   border-radius: 12px;
@@ -469,12 +474,15 @@ const getTypeLabel = (type) => serviceTypeMap[type] || type
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
   &:hover {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: linear-gradient(135deg, #ea580c, #dc2626);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
   }
 }
 

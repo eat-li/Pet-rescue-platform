@@ -3,6 +3,8 @@ import { ref, computed, onMounted } from 'vue'
 import { getUserBookingsAPI, cancelBookingAPI } from '@/api/service'
 import Toast from '@/components/Common/Toast.vue'
 import { useToast } from '@/hooks/Common/useToast.js'
+import { markRaw } from 'vue'
+import { ClipboardIcon, ClockIcon, CheckIcon, SparkleIcon, CloseIcon, CalendarIcon, PawIcon } from '@/components/Icons'
 
 const { showToast, toastMessage, toastType, duration, showSuccess, showError, showWarning, hideToast } = useToast()
 
@@ -13,14 +15,14 @@ const activeTab = ref('all')
 
 // 状态映射
 const statusMap = {
-  pending: { label: '待确认', color: '#f59e0b', bg: '#fffbeb', icon: '⏳' },
-  confirmed: { label: '已确认', color: '#10b981', bg: '#ecfdf5', icon: '✅' },
-  completed: { label: '已完成', color: '#6366f1', bg: '#eff6ff', icon: '✨' },
-  cancelled: { label: '已取消', color: '#9ca3af', bg: '#f3f4f6', icon: '❌' }
+  pending: { label: '待确认', color: '#f59e0b', bg: '#fffbeb', icon: markRaw(ClockIcon) },
+  confirmed: { label: '已确认', color: '#10b981', bg: '#ecfdf5', icon: markRaw(CheckIcon) },
+  completed: { label: '已完成', color: '#f97316', bg: '#fff7ed', icon: markRaw(SparkleIcon) },
+  cancelled: { label: '已取消', color: '#9ca3af', bg: '#f3f4f6', icon: markRaw(CloseIcon) }
 }
 
 const getStatusInfo = (status) =>
-  statusMap[status] || { label: status, color: '#6b7280', bg: '#f9fafb', icon: '📋' }
+  statusMap[status] || { label: status, color: '#6b7280', bg: '#f9fafb', icon: markRaw(ClipboardIcon) }
 
 // 服务类型映射
 const serviceTypeMap = {
@@ -129,7 +131,7 @@ onMounted(fetchBookings)
     />
     <!-- 标题栏 -->
     <div class="orders-header">
-      <h2 class="orders-title">📋 我的订单</h2>
+      <h2 class="orders-title"><ClipboardIcon :size="20" class="title-icon" /> 我的订单</h2>
       <span class="orders-count" v-if="bookings.length > 0">
         共 {{ bookings.length }} 笔预约
       </span>
@@ -158,13 +160,13 @@ onMounted(fetchBookings)
 
     <!-- 加载中 -->
     <div v-if="loading" class="loading-state">
-      <div class="loading-spin">📋</div>
+      <div class="loading-spin"><ClipboardIcon :size="40" color="#f97316" /></div>
       <p>加载中...</p>
     </div>
 
     <!-- 空状态 -->
     <div v-else-if="filteredBookings.length === 0" class="empty-state">
-      <div class="empty-icon">📋</div>
+      <div class="empty-icon"><ClipboardIcon :size="52" color="#d1d5db" /></div>
       <p class="empty-title">暂无订单</p>
       <p class="empty-sub">{{ activeTab === 'all' ? '您还没有预约任何服务' : '该状态下没有订单' }}</p>
     </div>
@@ -189,7 +191,8 @@ onMounted(fetchBookings)
               background: getStatusInfo(order.status).bg
             }"
           >
-            {{ getStatusInfo(order.status).icon }} {{ getStatusInfo(order.status).label }}
+            <component :is="getStatusInfo(order.status).icon" :size="13" />
+            {{ getStatusInfo(order.status).label }}
           </span>
         </div>
 
@@ -199,15 +202,15 @@ onMounted(fetchBookings)
             <div class="service-image" v-if="order.service?.image">
               <img :src="order.service.image" :alt="order.service.name" />
             </div>
-            <div class="service-image placeholder" v-else>🐾</div>
+            <div class="service-image placeholder" v-else><PawIcon :size="28" color="#d1d5db" /></div>
             <div class="service-detail">
               <h4 class="service-name">{{ order.service?.name || '未知服务' }}</h4>
               <p class="service-type" v-if="order.service?.type">
                 类型：{{ getTypeLabel(order.service.type) }}
               </p>
               <div class="appointment-info">
-                <span class="info-item">📅 {{ formatDate(order.appointmentDate) }}</span>
-                <span class="info-item">🕐 {{ order.appointmentTime }}</span>
+                <span class="info-item"><CalendarIcon :size="13" /> {{ formatDate(order.appointmentDate) }}</span>
+                <span class="info-item"><ClockIcon :size="13" /> {{ order.appointmentTime }}</span>
               </div>
             </div>
           </div>
@@ -262,7 +265,7 @@ onMounted(fetchBookings)
       <div v-if="showCancelModal" class="order-modal-mask" @click.self="closeCancelModal">
         <div class="order-modal-box">
           <div class="modal-header">
-            <h3 class="modal-title">❌ 取消订单</h3>
+            <h3 class="modal-title"><CloseIcon :size="18" color="#ef4444" /> 取消订单</h3>
             <button class="modal-close" @click="closeCancelModal">×</button>
           </div>
           <div class="modal-body">
@@ -314,6 +317,13 @@ onMounted(fetchBookings)
   font-weight: 700;
   color: #1a1a2e;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .title-icon {
+    color: #f97316;
+  }
 }
 
 .orders-count {
@@ -348,12 +358,12 @@ onMounted(fetchBookings)
   gap: 6px;
 
   &:hover {
-    border-color: #8b5cf6;
-    color: #8b5cf6;
+    border-color: #f97316;
+    color: #f97316;
   }
 
   &.active {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: #f97316;
     border-color: transparent;
     color: white;
   }
@@ -374,7 +384,7 @@ onMounted(fetchBookings)
   align-items: center;
   justify-content: center;
   gap: 12px;
-  .loading-spin { font-size: 40px; animation: bounce 1.2s ease-in-out infinite; }
+  .loading-spin { animation: bounce 1.2s ease-in-out infinite; }
   p { font-size: 14px; color: #9ca3af; }
 }
 
@@ -393,7 +403,7 @@ onMounted(fetchBookings)
   padding: 60px 20px;
 }
 
-.empty-icon  { font-size: 52px; }
+.empty-icon  { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
 .empty-title { font-size: 16px; font-weight: 600; color: #374151; margin: 4px 0 0; }
 .empty-sub   { font-size: 13px; color: #9ca3af; margin: 0; }
 
@@ -413,8 +423,8 @@ onMounted(fetchBookings)
   transition: all 0.2s;
 
   &:hover {
-    border-color: #e0e7ff;
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.08);
+    border-color: #fed7aa;
+    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.08);
   }
 
   &.order-cancelled {
@@ -453,6 +463,9 @@ onMounted(fetchBookings)
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 // ── 订单主体 ──────────────────────────────────────────────
@@ -504,8 +517,8 @@ onMounted(fetchBookings)
 
 .service-type {
   font-size: 12px;
-  color: #8b5cf6;
-  background: #f5f3ff;
+  color: #ea580c;
+  background: #fff7ed;
   display: inline-block;
   padding: 2px 8px;
   border-radius: 20px;
@@ -521,6 +534,9 @@ onMounted(fetchBookings)
   font-size: 12px;
   color: #6b7280;
   background: #f9fafb;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   padding: 4px 10px;
   border-radius: 8px;
 }
@@ -702,8 +718,8 @@ onMounted(fetchBookings)
 
   &:focus {
     outline: none;
-    border-color: #8b5cf6;
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
   }
 }
 

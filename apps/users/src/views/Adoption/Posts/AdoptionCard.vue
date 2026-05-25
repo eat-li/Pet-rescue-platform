@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { MaleIcon, FemaleIcon, SyringeIcon, LocationIcon } from '../../../components/Icons'
 
 const props = defineProps({
   adoption: {
@@ -66,6 +67,7 @@ const location = props.adoption.request?.location || '地点未填写'
     <!-- 图片区域 -->
     <div class="card-image">
       <img :src="getImageUrl(pet.image)" :alt="pet.nickName" loading="lazy" />
+      <div class="image-overlay"></div>
       <!-- 状态徽章 -->
       <span class="status-badge" :class="statusMap[adoption.status]?.class">
         {{ statusMap[adoption.status]?.label }}
@@ -85,7 +87,8 @@ const location = props.adoption.request?.location || '地点未填写'
       <div class="card-title-row">
         <h3 class="pet-name">{{ pet.nickName }}</h3>
         <span class="sex-icon" :class="pet.sex ? 'male' : 'female'">
-          {{ pet.sex ? '♂' : '♀' }}
+          <MaleIcon v-if="pet.sex" :size="16" color="#3b82f6" />
+          <FemaleIcon v-else :size="16" color="#ec4899" />
         </span>
       </div>
 
@@ -95,7 +98,8 @@ const location = props.adoption.request?.location || '地点未填写'
         <span class="info-tag age">{{ pet.breed }}</span>
         <span class="info-tag age-val">{{ calculateAge(pet.birthday) }}</span>
         <span class="info-tag vaccine" :class="vaccineMap[pet.vaccineStatus]?.class">
-          💉 {{ vaccineMap[pet.vaccineStatus]?.label }}
+          <SyringeIcon :size="14" />
+          {{ vaccineMap[pet.vaccineStatus]?.label }}
         </span>
       </div>
 
@@ -104,8 +108,18 @@ const location = props.adoption.request?.location || '地点未填写'
 
       <!-- 底部：位置 + 发布者 -->
       <div class="card-footer">
-        <span class="location">📍 {{ location }}</span>
-        <span class="publisher">{{ publisherName }}</span>
+        <span class="location">
+          <LocationIcon :size="14" />
+          {{ location }}
+        </span>
+        <span class="publisher">
+          <img
+            :src="user.avatar ? `http://localhost:3000${user.avatar}` : '/default-avatar.jpg'"
+            class="publisher-mini-avatar"
+            :alt="publisherName"
+          />
+          {{ publisherName }}
+        </span>
       </div>
     </div>
   </div>
@@ -119,16 +133,21 @@ const location = props.adoption.request?.location || '地点未填写'
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   border: 1px solid #f0f0f0;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   display: flex;
   flex-direction: column;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    border-color: rgba(249, 115, 22, 0.2);
 
     .card-image img {
-      transform: scale(1.05);
+      transform: scale(1.06);
+    }
+
+    .image-overlay {
+      opacity: 0.35;
     }
   }
 }
@@ -145,6 +164,18 @@ const location = props.adoption.request?.location || '地点未填写'
     transition: transform 0.4s ease;
   }
 
+  .image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+    opacity: 0.2;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
   .status-badge {
     position: absolute;
     top: 12px;
@@ -153,10 +184,12 @@ const location = props.adoption.request?.location || '地点未填写'
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 
-    &.status-pending  { background: rgba(22, 163, 74, 0.9);  color: white; }
-    &.status-adopted  { background: rgba(107, 114, 128, 0.9); color: white; }
-    &.status-rejected { background: rgba(239, 68, 68, 0.9);   color: white; }
+    &.status-pending  { background: rgba(22, 163, 74, 0.85);  color: white; }
+    &.status-adopted  { background: rgba(107, 114, 128, 0.85); color: white; }
+    &.status-rejected { background: rgba(239, 68, 68, 0.85);   color: white; }
   }
 
   .fee-badge {
@@ -167,10 +200,12 @@ const location = props.adoption.request?.location || '地点未填写'
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 
-    &.fee-free       { background: rgba(255,255,255,0.92); color: #16a34a; }
-    &.fee-paid       { background: rgba(249, 115, 22, 0.9); color: white; }
-    &.fee-negotiable { background: rgba(255,255,255,0.92); color: #d97706; }
+    &.fee-free       { background: rgba(255,255,255,0.85); color: #16a34a; }
+    &.fee-paid       { background: rgba(249, 115, 22, 0.85); color: white; }
+    &.fee-negotiable { background: rgba(255,255,255,0.85); color: #d97706; }
   }
 }
 
@@ -233,7 +268,28 @@ const location = props.adoption.request?.location || '地点未填写'
   border-top: 1px solid #f3f4f6;
   margin-top: auto;
 
-  .location  { font-size: 12px; color: #9ca3af; }
-  .publisher { font-size: 12px; color: #f97316; font-weight: 500; }
+  .location {
+    font-size: 12px;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .publisher {
+    font-size: 12px;
+    color: #f97316;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .publisher-mini-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 }
 </style>

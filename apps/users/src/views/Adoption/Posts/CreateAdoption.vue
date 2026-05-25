@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { createAdoptionAPI, uploadAdoptionImageAPI } from '@/api/adoption'
+import { CameraIcon, GiftIcon, MoneyIcon, HandshakeIcon, WarningIcon } from '@/components/Icons'
 
 const router = useRouter()
 
@@ -170,10 +171,22 @@ const handleSubmit = async () => {
         <h1>发布领养信息</h1>
       </div>
 
+      <div class="step-indicator">
+        <div class="step active">
+          <span class="step-num">1</span>
+          <span class="step-label">宠物信息</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step active">
+          <span class="step-num">2</span>
+          <span class="step-label">领养信息</span>
+        </div>
+      </div>
+
       <div class="form-layout">
         <!-- ── 左列：宠物信息 ─────────────────────────── -->
         <div class="form-section">
-          <h2 class="section-title">🐾 宠物基本信息</h2>
+          <h2 class="section-title">宠物基本信息</h2>
 
           <!-- 图片上传 -->
           <div class="form-item full-width">
@@ -184,7 +197,7 @@ const handleSubmit = async () => {
                 <div v-if="imageLoading" class="upload-loading">🔄 上传中...</div>
                 <img v-else-if="imagePreview" :src="imagePreview" alt="宠物照片预览" class="preview-img" />
                 <div v-else class="upload-placeholder">
-                  <span class="upload-icon">📷</span>
+                  <CameraIcon :size="36" color="#d1d5db" />
                   <p>点击上传宠物照片</p>
                   <p class="upload-hint">支持 jpg、png，最大 5MB</p>
                 </div>
@@ -276,15 +289,15 @@ const handleSubmit = async () => {
 
         <!-- ── 右列：领养信息 ────────────────────────── -->
         <div class="form-section">
-          <h2 class="section-title">📋 领养相关信息</h2>
+          <h2 class="section-title">领养相关信息</h2>
 
           <!-- 费用类型 -->
           <div class="form-item full-width">
             <label class="form-label">费用类型 <span class="required">*</span></label>
             <div class="radio-group">
-              <button :class="['radio-btn', { active: form.fee === 'free' }]" @click="form.fee = 'free'">🎁 无偿</button>
-              <button :class="['radio-btn', { active: form.fee === 'paid' }]" @click="form.fee = 'paid'">💰 有偿</button>
-              <button :class="['radio-btn', { active: form.fee === 'negotiable' }]" @click="form.fee = 'negotiable'">🤝 面议</button>
+              <button :class="['radio-btn', { active: form.fee === 'free' }]" @click="form.fee = 'free'"><GiftIcon :size="14" /> 无偿</button>
+              <button :class="['radio-btn', { active: form.fee === 'paid' }]" @click="form.fee = 'paid'"><MoneyIcon :size="14" /> 有偿</button>
+              <button :class="['radio-btn', { active: form.fee === 'negotiable' }]" @click="form.fee = 'negotiable'"><HandshakeIcon :size="14" /> 面议</button>
             </div>
           </div>
 
@@ -320,7 +333,7 @@ const handleSubmit = async () => {
 
           <!-- 提交区 -->
           <div class="submit-area">
-            <p v-if="submitError" class="submit-error">⚠️ {{ submitError }}</p>
+            <p v-if="submitError" class="submit-error"><WarningIcon :size="14" color="#ef4444" /> {{ submitError }}</p>
             <button
               class="submit-btn"
               :disabled="!isValid || submitting || imageLoading"
@@ -371,6 +384,60 @@ const handleSubmit = async () => {
   &:hover { border-color: #f97316; color: #f97316; }
 }
 
+// ── 步骤指示器 ──────────────────────────────────────
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 28px;
+  padding: 0 20px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.4;
+  transition: opacity 0.3s;
+
+  &.active { opacity: 1; }
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .active & {
+    background: linear-gradient(135deg, #ff9a3c, #f97316);
+    color: white;
+  }
+}
+
+.step-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #9ca3af;
+
+  .active & { color: #1f2937; }
+}
+
+.step-line {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #f97316, #ff9a3c);
+  margin: 0 12px;
+  border-radius: 1px;
+}
+
 .form-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -400,7 +467,9 @@ const handleSubmit = async () => {
   color: #1f2937;
   margin: 0;
   padding-bottom: 16px;
+  padding-left: 14px;
   border-bottom: 2px solid #f3f4f6;
+  border-left: 3px solid #f97316;
 }
 
 .form-item {
@@ -427,11 +496,15 @@ const handleSubmit = async () => {
   font-size: 14px;
   color: #1f2937;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   font-family: inherit;
   background: white;
 
-  &:focus { border-color: #f97316; }
+  &:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    background: #fffdf9;
+  }
   &::placeholder { color: #d1d5db; }
 }
 
@@ -439,12 +512,21 @@ textarea.form-input { resize: vertical; }
 
 /* 图片上传 */
 .image-upload-area {
-  border: 2px dashed #e5e7eb;
+  border: 2px dashed #d1d5db;
   border-radius: 14px;
   overflow: hidden;
-  transition: border-color 0.2s;
+  transition: border-color 0.3s, background 0.3s, transform 0.2s;
 
-  &:hover, &.has-image { border-color: #f97316; }
+  &:hover {
+    border-color: #f97316;
+    background: #fffbeb;
+    transform: translateY(-1px);
+  }
+
+  &.has-image {
+    border-color: #f97316;
+    border-style: solid;
+  }
 }
 
 .upload-trigger {
@@ -455,10 +537,13 @@ textarea.form-input { resize: vertical; }
 .upload-placeholder {
   padding: 32px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 
-  .upload-icon { font-size: 36px; display: block; margin-bottom: 8px; }
   p { font-size: 14px; color: #9ca3af; margin: 0; }
-  .upload-hint { font-size: 12px; margin-top: 4px; }
+  .upload-hint { font-size: 12px; }
 }
 
 .upload-loading {
@@ -499,9 +584,17 @@ textarea.form-input { resize: vertical; }
   color: #6b7280;
   cursor: pointer;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 
   &:hover  { border-color: #f97316; color: #f97316; }
-  &.active { background: #f97316; border-color: #f97316; color: white; }
+  &.active {
+    background: linear-gradient(135deg, #ff9a3c, #f97316);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+  }
 }
 
 /* 标签组 */
@@ -542,6 +635,10 @@ textarea.form-input { resize: vertical; }
   color: #ef4444;
   margin: 0;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .submit-btn {
@@ -557,7 +654,7 @@ textarea.form-input { resize: vertical; }
   box-shadow: 0 4px 16px rgba(249,115,22,0.35);
   transition: all 0.3s;
 
-  &:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(249,115,22,0.45); }
+  &:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(249,115,22,0.5); }
   &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 }
 

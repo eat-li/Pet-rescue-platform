@@ -8,6 +8,8 @@ import {
   batchDeleteCartAPI,
   batchCreateBookingAPI
 } from '@/api/service'
+import { markRaw } from 'vue'
+import { CartIcon, BathIcon, ScissorsIcon, PillIcon, BallIcon, StarIcon, PawIcon, TrashIcon, CalendarIcon } from '@/components/Icons'
 
 const router = useRouter()
 
@@ -18,15 +20,15 @@ const selectedTotal = ref('0.00')
 
 // 服务类型映射
 const typeMap = {
-  basic_care:         { label: '基础护理', icon: '🛁', color: '#3b82f6', bg: '#eff6ff' },
-  beauty_styling:     { label: '美容造型', icon: '✂️', color: '#8b5cf6', bg: '#f5f3ff' },
-  health_medical:     { label: '健康医疗', icon: '💊', color: '#ef4444', bg: '#fef2f2' },
-  training_service:   { label: '训练服务', icon: '🎾', color: '#f59e0b', bg: '#fffbeb' },
-  special_experience: { label: '特色体验', icon: '⭐', color: '#10b981', bg: '#ecfdf5' }
+  basic_care:         { label: '基础护理', icon: markRaw(BathIcon), color: '#ea580c', bg: '#fff7ed' },
+  beauty_styling:     { label: '美容造型', icon: markRaw(ScissorsIcon), color: '#d97706', bg: '#fffbeb' },
+  health_medical:     { label: '健康医疗', icon: markRaw(PillIcon), color: '#ef4444', bg: '#fef2f2' },
+  training_service:   { label: '训练服务', icon: markRaw(BallIcon), color: '#f59e0b', bg: '#fffbeb' },
+  special_experience: { label: '特色体验', icon: markRaw(StarIcon), color: '#10b981', bg: '#ecfdf5' }
 }
 
 const getTypeInfo = (type) =>
-  typeMap[type] || { label: type, icon: '🐾', color: '#6b7280', bg: '#f9fafb' }
+  typeMap[type] || { label: type, icon: markRaw(PawIcon), color: '#6b7280', bg: '#f9fafb' }
 
 // 商品是否上架（兑容 boolean true / 数字 1 / 字符串 "true"/"1"）
 const isActive = (service) => {
@@ -214,7 +216,7 @@ onMounted(fetchCart)
     <!-- 标题栏 -->
     <div class="cart-header">
       <div class="header-left">
-        <h2 class="cart-title">🛒 我的购物车</h2>
+        <h2 class="cart-title"><CartIcon :size="20" class="title-icon" /> 我的购物车</h2>
         <span class="cart-count" v-if="cartItems.length > 0">
           共 {{ cartItems.length }} 项服务
         </span>
@@ -230,17 +232,17 @@ onMounted(fetchCart)
 
     <!-- 加载中 -->
     <div v-if="loading" class="loading-state">
-      <div class="loading-spin">🐾</div>
+      <div class="loading-spin"><PawIcon :size="40" color="#f97316" /></div>
       <p>加载中...</p>
     </div>
 
     <!-- 空购物车 -->
     <div v-else-if="cartItems.length === 0" class="empty-state">
-      <div class="empty-icon">🛒</div>
+      <div class="empty-icon"><CartIcon :size="52" color="#d1d5db" /></div>
       <p class="empty-title">购物车空空如也</p>
       <p class="empty-sub">快去挑选感兴趣的宠物服务吧</p>
       <button class="go-service-btn" @click="router.push('/service')">
-        🐾 浏览宠物服务
+        <PawIcon :size="16" color="white" /> 浏览宠物服务
       </button>
     </div>
 
@@ -286,7 +288,7 @@ onMounted(fetchCart)
                   background: getTypeInfo(item.service?.type).bg
                 }"
               >
-                {{ getTypeInfo(item.service?.type).icon }}
+                <component :is="getTypeInfo(item.service?.type).icon" :size="14" />
                 {{ getTypeInfo(item.service?.type).label }}
               </span>
               <span v-if="!isActive(item.service)" class="offline-tag">已下架</span>
@@ -296,7 +298,7 @@ onMounted(fetchCart)
 
             <!-- 标签信息 -->
             <div class="item-meta">
-              <span class="meta-tag">🐶 ≤ {{ item.service?.weight }} kg</span>
+              <span class="meta-tag">≤ {{ item.service?.weight }} kg</span>
               <span v-if="item.petWeight" class="meta-tag">宠物体重：{{ item.petWeight }} kg</span>
               <span v-if="item.notes" class="meta-tag notes-tag">备注：{{ item.notes }}</span>
             </div>
@@ -349,7 +351,7 @@ onMounted(fetchCart)
     <!-- 清空确认弹窗 -->
     <div v-if="showClearConfirm" class="modal-mask" @click.self="showClearConfirm = false">
       <div class="modal-box">
-        <div class="modal-icon">🗑️</div>
+        <div class="modal-icon"><TrashIcon :size="40" color="#ef4444" /></div>
         <h3 class="modal-title">确认清空购物车？</h3>
         <p class="modal-desc">清空后所有服务将从购物车移除，此操作不可撤销。</p>
         <div class="modal-actions">
@@ -366,7 +368,7 @@ onMounted(fetchCart)
       <div v-if="showBookingModal" class="cart-modal-mask" @click.self="closeBookingModal">
         <div class="cart-modal-box booking-modal-box">
           <div class="modal-header">
-            <h3 class="modal-title">📅 批量预约服务</h3>
+            <h3 class="modal-title"><CalendarIcon :size="18" color="#f97316" /> 批量预约服务</h3>
             <button class="modal-close" @click="closeBookingModal">×</button>
           </div>
           
@@ -473,6 +475,13 @@ onMounted(fetchCart)
   font-weight: 700;
   color: #1a1a2e;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .title-icon {
+    color: #f97316;
+  }
 }
 
 .cart-count {
@@ -522,13 +531,13 @@ onMounted(fetchCart)
   padding: 40px 20px;
 }
 
-.empty-icon  { font-size: 52px; }
+.empty-icon  { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
 .empty-title { font-size: 16px; font-weight: 600; color: #374151; margin: 4px 0 0; }
 .empty-sub   { font-size: 13px; color: #9ca3af; margin: 0 0 16px; }
 
 .go-service-btn {
   padding: 10px 24px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: #f97316;
   color: white;
   border: none;
   border-radius: 10px;
@@ -536,7 +545,10 @@ onMounted(fetchCart)
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  &:hover { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  &:hover { background: #ea580c; }
 }
 
 // ── 全选栏 ────────────────────────────────────────────────
@@ -573,8 +585,8 @@ onMounted(fetchCart)
   flex-shrink: 0;
 
   &.checked {
-    background: #8b5cf6;
-    border-color: #8b5cf6;
+    background: #f97316;
+    border-color: #f97316;
   }
 
   svg { width: 10px; height: 8px; }
@@ -606,7 +618,7 @@ onMounted(fetchCart)
   border: 1.5px solid #f0f0f0;
   transition: all 0.2s;
 
-  &:hover { border-color: #e0e7ff; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+  &:hover { border-color: #fed7aa; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
 
   &.item-disabled {
     opacity: 0.6;
@@ -682,7 +694,7 @@ onMounted(fetchCart)
   border-radius: 6px;
 }
 
-.notes-tag { color: #8b5cf6; background: #f5f3ff; }
+.notes-tag { color: #ea580c; background: #fff7ed; }
 
 // ── 右侧操作 ──────────────────────────────────────────────
 .item-right {
@@ -709,7 +721,7 @@ onMounted(fetchCart)
 
 .book-btn {
   padding: 6px 14px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: #f97316;
   color: white;
   border: none;
   border-radius: 8px;
@@ -717,7 +729,7 @@ onMounted(fetchCart)
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  &:hover:not(:disabled) { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+  &:hover:not(:disabled) { background: #ea580c; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
@@ -742,8 +754,8 @@ onMounted(fetchCart)
   background: white;
   border-radius: 14px;
   padding: 14px 20px;
-  border: 1.5px solid #e0e7ff;
-  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.1);
+  border: 1.5px solid #fed7aa;
+  box-shadow: 0 2px 12px rgba(249, 115, 22, 0.1);
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -757,7 +769,7 @@ onMounted(fetchCart)
 .total-label {
   font-size: 13px;
   color: #6b7280;
-  strong { color: #8b5cf6; }
+  strong { color: #f97316; }
 }
 
 .total-price {
@@ -769,7 +781,7 @@ onMounted(fetchCart)
 
 .checkout-btn {
   padding: 10px 28px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: #f97316;
   color: white;
   border: none;
   border-radius: 10px;
@@ -780,7 +792,7 @@ onMounted(fetchCart)
   white-space: nowrap;
 
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: #ea580c;
     transform: translateY(-1px);
   }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -807,7 +819,7 @@ onMounted(fetchCart)
   box-shadow: 0 20px 60px rgba(0,0,0,0.2);
 }
 
-.modal-icon  { font-size: 40px; margin-bottom: 12px; }
+.modal-icon  { display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
 .modal-title { font-size: 17px; font-weight: 700; color: #1a1a2e; margin: 0 0 8px; }
 .modal-desc  { font-size: 13px; color: #9ca3af; line-height: 1.6; margin: 0 0 24px; }
 
@@ -889,7 +901,7 @@ onMounted(fetchCart)
 }
 
 .booking-summary {
-  background: linear-gradient(135deg, #f5f3ff, #eff6ff);
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
   border-radius: 12px;
   padding: 14px 16px;
   margin-bottom: 20px;
@@ -900,7 +912,7 @@ onMounted(fetchCart)
   margin: 0;
   font-size: 14px;
   color: #4b5563;
-  strong { color: #8b5cf6; font-size: 16px; }
+  strong { color: #f97316; font-size: 16px; }
 }
 
 .summary-price {
@@ -946,8 +958,8 @@ onMounted(fetchCart)
   transition: all 0.2s;
   &:focus {
     outline: none;
-    border-color: #8b5cf6;
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
   }
 }
 
@@ -957,9 +969,9 @@ onMounted(fetchCart)
 }
 
 .booking-submit {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  background: #f97316 !important;
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    background: #ea580c !important;
   }
 }
 </style>

@@ -12,14 +12,9 @@ exports.ArticleCreateService = async (req, res) => {
   const currentUserId = req.currentUser.id  // 从认证中间件获取当前用户ID
   const role = req.role  // 获取用户角色
   const { title, type, content, images = [], tag = [], userId } = req.body
-  
+
   // 确定最终使用的userId：管理员可以指定userId，否则使用当前用户ID
   const finalUserId = (role === 'admin' && userId) ? userId : currentUserId
-  
-  console.log(
-    title, type, content, images, tag,
-    finalUserId, role
-  )
 
   try {
     //  基础验证
@@ -792,7 +787,6 @@ exports.ArticleCommentStatusService = async (req, res) => {
   try {
     // 获取评论ID和状态
     const role = req.role;
-    console.log(123)
     if (role !== 'admin' && role !== 'super_admin') {
       return res.status(403).json({
         code: 403,

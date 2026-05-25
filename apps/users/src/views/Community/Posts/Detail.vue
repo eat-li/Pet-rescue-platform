@@ -213,39 +213,25 @@ onUnmounted(() => {
       <!-- 顶部返回按钮 -->
       <section class="back-btn">
         <button class="back-button" @click="handleGoBack">
-          <i class="fas fa-arrow-left"></i>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <span>返回帖子列表</span>
         </button>
       </section>
-
-      <!-- 顶部封面图片卡片（已隐藏，图片在轮播区域展示） -->
-      <!-- <section class="cover-card" v-if="articleDetail.images && articleDetail.images.length > 0">
-        <img
-          :src="getSafeImageUrl(articleDetail.images, 0)"
-          :alt="articleDetail.title || '文章封面'"
-          @click="openImagePreview(getSafeImageUrl(articleDetail.images, 0), 0)"
-          class="clickable-image"
-        >
-      </section> -->
 
       <!-- 用户信息和帖子基本信息字段 -->
       <section class="article-info">
         <h2>{{ articleDetail.title || '加载中...' }}</h2>
 
         <div class="user-info">
-          <div class="avatar">
-            <div class="ring-primary w-6 rounded-full">
-              <img :src="getSafeImageUrl(articleDetail.user?.avatar)" :alt="articleDetail.user?.nickname || '用户头像'" />
-            </div>
+          <div class="avatar-wrapper">
+            <img :src="getSafeImageUrl(articleDetail.user?.avatar)" :alt="articleDetail.user?.nickname || '用户头像'" />
           </div>
-          <div class="user-name">
-            <p>{{ articleDetail.user?.nickname || '未知用户' }}</p>
-          </div>
-          <div class="publish-time ml-2">
-            <p>{{ formattedDate }}</p>
-          </div>
-          <div class="location ml-2">
-            <p>自贡市</p>
+          <div class="user-meta">
+            <span class="user-name">{{ articleDetail.user?.nickname || '未知用户' }}</span>
+            <span class="meta-dot"></span>
+            <span class="publish-time">{{ formattedDate }}</span>
           </div>
         </div>
       </section>
@@ -253,9 +239,9 @@ onUnmounted(() => {
       <!-- 轮播图区域 -->
       <section class="carousel-section" v-if="carouselImages.length > 0">
         <div class="custom-carousel">
-          <div 
-            v-for="(image, index) in carouselImages" 
-            :key="index" 
+          <div
+            v-for="(image, index) in carouselImages"
+            :key="index"
             class="carousel-image-item"
             @click="openImagePreview(image, index)"
           >
@@ -272,15 +258,24 @@ onUnmounted(() => {
       <!-- 统计信息 -->
       <section class="stats">
         <div class="stat-item">
-          <i class="fas fa-star"></i>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              fill="#ef4444" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
           <span>{{ articleDetail.star || 0 }} 点赞</span>
         </div>
         <div class="stat-item">
-          <i class="fas fa-comment"></i>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              fill="#3b82f6" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
           <span>{{ totalComments }} 评论</span>
         </div>
         <div class="stat-item">
-          <i class="fas fa-bookmark"></i>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"
+              fill="#f59e0b" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
           <span>{{ articleDetail.collection || 0 }} 收藏</span>
         </div>
       </section>
@@ -294,18 +289,25 @@ onUnmounted(() => {
     <div class="comment-section">
       <!-- 评论输入区域 -->
       <div class="comment-input-section">
-        <h3 class="comment-title">评论 ({{ totalComments }})</h3>
+        <h3 class="comment-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          评论 ({{ totalComments }})
+        </h3>
         <div class="comment-input-wrapper">
           <div class="user-avatar">
             <img :src="getSafeImageUrl(articleDetail.user?.avatar)" alt="当前用户头像" class="avatar-img">
-
           </div>
           <div class="input-area">
             <textarea v-model="commentText" placeholder="写下你的评论..." class="comment-textarea" rows="3"
               :disabled="isSubmitting"></textarea>
             <div class="input-actions">
               <button class="send-btn" :disabled="!commentText.trim() || isSubmitting" @click="handleSendComment">
-                <i class="fas fa-paper-plane"></i>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
                 {{ isSubmitting ? '发送中...' : '发送评论' }}
               </button>
             </div>
@@ -328,8 +330,10 @@ onUnmounted(() => {
               {{ comment.content }}
             </div>
             <div class="comment-actions">
-              <button class="action-btn reply-btn" @click="toggleReply(comment.id)">
-                <i class="fas fa-reply"></i>
+              <button class="reply-btn" @click="toggleReply(comment.id)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 10h10a5 5 0 0 1 5 5v6M3 10l6 6M3 10l6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
                 {{ activeReplyId === comment.id ? '取消回复' : '回复' }}
               </button>
             </div>
@@ -344,17 +348,10 @@ onUnmounted(() => {
                 :disabled="isReplying"
               ></textarea>
               <div class="reply-actions-btn">
-                <button
-                  class="cancel-reply-btn"
-                  @click="toggleReply(comment.id)"
-                >
-                  取消
-                </button>
-                <button
-                  class="submit-reply-btn"
+                <button class="cancel-reply-btn" @click="toggleReply(comment.id)">取消</button>
+                <button class="submit-reply-btn"
                   :disabled="!replyText[comment.id]?.trim() || isReplying"
-                  @click="handleReplyComment(comment.id, replyText[comment.id])"
-                >
+                  @click="handleReplyComment(comment.id, replyText[comment.id])">
                   {{ isReplying ? '发送中...' : '发送回复' }}
                 </button>
               </div>
@@ -371,12 +368,12 @@ onUnmounted(() => {
                     <span class="user-name">{{ reply.user.nickname }}</span>
                     <span class="reply-time">{{ reply.createdAt }}</span>
                   </div>
-                  <div class="reply-text">
-                    {{ reply.content }}
-                  </div>
+                  <div class="reply-text">{{ reply.content }}</div>
                   <div class="reply-actions">
-                    <button class="action-btn reply-btn" @click="toggleReply(comment.id)">
-                      <i class="fas fa-reply"></i>
+                    <button class="reply-btn" @click="toggleReply(comment.id)">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 10h10a5 5 0 0 1 5 5v6M3 10l6 6M3 10l6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
                       回复
                     </button>
                   </div>
@@ -388,6 +385,10 @@ onUnmounted(() => {
 
         <!-- 暂无评论提示 -->
         <div v-if="formattedComments.length === 0" class="no-comments">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
           <p>暂无评论，快来发表第一条评论吧！</p>
         </div>
       </div>
@@ -407,35 +408,26 @@ onUnmounted(() => {
     <Transition name="fade">
       <div v-if="showImagePreview" class="image-preview-overlay" @click="closeImagePreview">
         <div class="image-preview-container" @click.stop>
-          <!-- 关闭按钮 -->
           <button class="preview-close-btn" @click="closeImagePreview">
             <i class="fas fa-times"></i>
           </button>
-          
-          <!-- 上一张按钮 -->
-          <button 
-            v-if="carouselImages.length > 1" 
-            class="preview-nav-btn preview-prev-btn" 
+          <button
+            v-if="carouselImages.length > 1"
+            class="preview-nav-btn preview-prev-btn"
             @click="prevPreviewImage"
           >
             <i class="fas fa-chevron-left"></i>
           </button>
-          
-          <!-- 图片 -->
           <div class="preview-image-wrapper" @wheel.stop>
             <img :src="previewImageUrl" alt="预览图片" class="preview-image">
           </div>
-          
-          <!-- 下一张按钮 -->
-          <button 
-            v-if="carouselImages.length > 1" 
-            class="preview-nav-btn preview-next-btn" 
+          <button
+            v-if="carouselImages.length > 1"
+            class="preview-nav-btn preview-next-btn"
             @click="nextPreviewImage"
           >
             <i class="fas fa-chevron-right"></i>
           </button>
-          
-          <!-- 图片计数器 -->
           <div v-if="carouselImages.length > 1" class="preview-counter">
             {{ previewImageIndex + 1 }} / {{ carouselImages.length }}
           </div>
@@ -449,134 +441,124 @@ onUnmounted(() => {
 <style lang='scss' scoped>
 .detail {
   margin: 0 auto;
-  transform: translateY(30px);
+  margin-top: 40px;
+  margin-bottom: 40px;
   width: 70%;
-  background-color: #F7F7F7;
-  border-radius: 10px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f3f4f6;
+  overflow: hidden;
 
   .back-btn {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 20px 30px;
-    margin-top: 20px;
+    padding: 24px 32px;
 
     .back-button {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 16px;
-      background-color: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
+      padding: 10px 18px;
+      background: #fff;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 25px;
       color: #374151;
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+
+      svg {
+        transition: transform 0.3s ease;
+      }
 
       &:hover {
-        background-color: #f9fafb;
-        border-color: #d1d5db;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
+        background: #f97316;
+        border-color: #f97316;
+        color: #fff;
+        transform: translateX(-4px);
+        box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
 
-      &:active {
-        transform: translateY(1px);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      }
-
-      i {
-        font-size: 12px;
-        color: #6b7280;
-      }
-
-      span {
-        color: #374151;
-      }
-    }
-  }
-
-  .cover-card {
-    margin: 0 auto;
-    margin-top: 20px;
-    width: 90%;
-    border-radius: 10px;
-    overflow: hidden;
-    background: #f8f9fa;
-
-    .clickable-image {
-      width: 100%;
-      height: auto;
-      max-height: 400px;
-      object-fit: contain;
-      cursor: zoom-in;
-      transition: transform 0.3s ease;
-      display: block;
-
-      &:hover {
-        transform: scale(1.02);
+        svg path { stroke: #fff; }
       }
     }
   }
 
   .article-info {
     margin: 0 auto;
-    margin-top: 20px;
     width: 90%;
-    min-height: 100px;
-    border-radius: 10px;
+    padding: 20px 0;
+    border-bottom: 1px solid #f3f4f6;
 
     h2 {
-      font-size: 25px;
-      font-weight: 500;
-      color: #333;
-      font-weight: bold;
-      margin-bottom: 15px;
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin: 0 0 20px;
+      line-height: 1.3;
     }
 
     .user-info {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      height: 40px;
+      gap: 12px;
 
-      .avatar {
-        margin-right: 10px;
+      .avatar-wrapper {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        flex-shrink: 0;
 
         img {
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
+          width: 100%;
+          height: 100%;
           object-fit: cover;
         }
       }
 
-      .user-name,
-      .publish-time,
-      .location {
-        color: #979899;
-        font-size: 14px;
+      .user-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #9ca3af;
+
+        .user-name {
+          font-weight: 600;
+          color: #374151;
+          font-size: 14px;
+        }
+
+        .meta-dot {
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background: #f97316;
+          flex-shrink: 0;
+        }
       }
     }
   }
 
   .content {
     margin: 0 auto;
-    margin-top: 20px;
     width: 90%;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #e5e7eb;
-    line-height: 1.6;
-    color: #333;
+    padding: 24px 0;
+    border-bottom: 1px solid #f3f4f6;
+    line-height: 1.8;
+    color: #374151;
+    font-size: 15px;
   }
 
   .carousel-section {
     margin: 0 auto;
-    margin-top: 20px;
     width: 90%;
+    padding: 20px 0;
 
     .custom-carousel {
       display: flex;
@@ -596,7 +578,7 @@ onUnmounted(() => {
       }
 
       &::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
+        background: linear-gradient(90deg, #f97316, #fb923c);
         border-radius: 3px;
       }
 
@@ -604,76 +586,78 @@ onUnmounted(() => {
         flex: 0 0 auto;
         scroll-snap-align: start;
         cursor: zoom-in;
-        border-radius: 8px;
+        border-radius: 16px;
         overflow: hidden;
-        background: #f8f9fa;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
 
         &:hover {
           transform: translateY(-4px);
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
         .carousel-img {
           width: 280px;
           height: 200px;
-          object-fit: contain;
+          object-fit: cover;
           display: block;
         }
       }
     }
   }
 
-  // 图片预览弹窗样式已移至非 scoped style 块
-  // 因为 Teleport to="body" 元素在 scoped 外部
-
   .stats {
     margin: 0 auto;
-    margin-top: 20px;
     width: 90%;
     display: flex;
-    gap: 20px;
-    padding: 15px 0;
-    border-bottom: 1px solid #e5e7eb;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid #f3f4f6;
 
     .stat-item {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
+      background: #f9fafb;
+      border: 1px solid #f3f4f6;
+      padding: 8px 16px;
+      border-radius: 20px;
       color: #6b7280;
-      font-size: 14px;
-
-      i {
-        font-size: 16px;
-      }
+      font-size: 13px;
+      font-weight: 500;
     }
   }
 
   .tag-section {
     margin: 0 auto;
     width: 90%;
-    padding-bottom: 30px;
+    padding: 20px 0 30px;
   }
 
   .comment-section {
     margin: 0 auto;
     width: 90%;
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 20px;
+    background: #f9fafb;
+    border-radius: 20px;
+    padding: 28px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    border: 1px solid #f3f4f6;
 
     .comment-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       font-size: 18px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #f0f0f0;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin: 0 0 24px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #fed7aa;
     }
 
     .comment-input-section {
-      margin-bottom: 30px;
+      margin-bottom: 28px;
 
       .comment-input-wrapper {
         display: flex;
@@ -688,6 +672,7 @@ onUnmounted(() => {
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
           }
         }
 
@@ -696,19 +681,21 @@ onUnmounted(() => {
 
           .comment-textarea {
             width: 100%;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 14px 16px;
             font-size: 14px;
             line-height: 1.5;
             resize: vertical;
             min-height: 80px;
             font-family: inherit;
+            background: #fff;
+            transition: all 0.3s ease;
 
             &:focus {
               outline: none;
-              border-color: #3b82f6;
-              box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+              border-color: #f97316;
+              box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
             }
 
             &::placeholder {
@@ -725,26 +712,26 @@ onUnmounted(() => {
               display: flex;
               align-items: center;
               gap: 6px;
-              padding: 8px 16px;
-              background: #3b82f6;
+              padding: 10px 20px;
+              background: linear-gradient(135deg, #f97316, #ea580c);
               color: white;
               border: none;
-              border-radius: 6px;
+              border-radius: 25px;
               font-size: 14px;
+              font-weight: 600;
               cursor: pointer;
-              transition: all 0.2s;
+              transition: all 0.3s ease;
+              box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
 
               &:hover:not(:disabled) {
-                background: #2563eb;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
               }
 
               &:disabled {
                 background: #d1d5db;
+                box-shadow: none;
                 cursor: not-allowed;
-              }
-
-              i {
-                font-size: 12px;
               }
             }
           }
@@ -758,7 +745,7 @@ onUnmounted(() => {
         gap: 12px;
         margin-bottom: 20px;
         padding-bottom: 20px;
-        border-bottom: 1px solid #f5f5f5;
+        border-bottom: 1px solid #e5e7eb;
 
         &:last-child {
           border-bottom: none;
@@ -774,11 +761,17 @@ onUnmounted(() => {
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
           }
         }
 
         .comment-content {
           flex: 1;
+          background: #fff;
+          border-radius: 16px;
+          padding: 16px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+          border: 1px solid #f3f4f6;
 
           .comment-header {
             display: flex;
@@ -788,7 +781,7 @@ onUnmounted(() => {
 
             .user-name {
               font-weight: 600;
-              color: #333;
+              color: #1f2937;
               font-size: 14px;
             }
 
@@ -799,8 +792,8 @@ onUnmounted(() => {
           }
 
           .comment-text {
-            color: #374151;
-            line-height: 1.6;
+            color: #4b5563;
+            line-height: 1.7;
             margin-bottom: 10px;
             font-size: 14px;
           }
@@ -809,58 +802,51 @@ onUnmounted(() => {
             display: flex;
             gap: 15px;
 
-            .action-btn {
+            .reply-btn {
               display: flex;
               align-items: center;
               gap: 4px;
               background: none;
               border: none;
-              color: #6b7280;
+              color: #9ca3af;
               font-size: 12px;
               cursor: pointer;
-              padding: 4px 8px;
-              border-radius: 4px;
+              padding: 4px 10px;
+              border-radius: 20px;
               transition: all 0.2s;
 
               &:hover {
-                background: #f3f4f6;
-                color: #374151;
-              }
-
-              &.like-btn:hover {
-                color: #ef4444;
-              }
-
-              i {
-                font-size: 12px;
+                background: #fff7ed;
+                color: #f97316;
               }
             }
           }
 
           // 回复输入框样式
           .reply-input-area {
-            margin-top: 15px;
-            padding: 12px;
+            margin-top: 14px;
+            padding: 14px;
             background: #f9fafb;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px solid #e5e7eb;
 
             .reply-textarea {
               width: 100%;
-              border: 1px solid #e5e7eb;
-              border-radius: 6px;
-              padding: 10px;
+              border: 2px solid #e5e7eb;
+              border-radius: 12px;
+              padding: 10px 14px;
               font-size: 13px;
               line-height: 1.5;
               resize: vertical;
               min-height: 60px;
               font-family: inherit;
               background: white;
+              transition: all 0.3s ease;
 
               &:focus {
                 outline: none;
-                border-color: #3b82f6;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                border-color: #f97316;
+                box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
               }
 
               &::placeholder {
@@ -875,11 +861,11 @@ onUnmounted(() => {
               margin-top: 10px;
 
               .cancel-reply-btn {
-                padding: 6px 12px;
+                padding: 6px 14px;
                 background: #f3f4f6;
                 color: #6b7280;
                 border: none;
-                border-radius: 6px;
+                border-radius: 20px;
                 font-size: 13px;
                 cursor: pointer;
                 transition: all 0.2s;
@@ -890,17 +876,18 @@ onUnmounted(() => {
               }
 
               .submit-reply-btn {
-                padding: 6px 12px;
-                background: #3b82f6;
+                padding: 6px 14px;
+                background: linear-gradient(135deg, #f97316, #ea580c);
                 color: white;
                 border: none;
-                border-radius: 6px;
+                border-radius: 20px;
                 font-size: 13px;
+                font-weight: 600;
                 cursor: pointer;
                 transition: all 0.2s;
 
                 &:hover:not(:disabled) {
-                  background: #2563eb;
+                  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
                 }
 
                 &:disabled {
@@ -912,14 +899,14 @@ onUnmounted(() => {
           }
 
           .replies-list {
-            margin-top: 15px;
-            padding-left: 20px;
-            border-left: 2px solid #f3f4f6;
+            margin-top: 14px;
+            padding-left: 16px;
+            border-left: 2px solid #fed7aa;
 
             .reply-item {
               display: flex;
               gap: 10px;
-              margin-bottom: 15px;
+              margin-bottom: 14px;
 
               &:last-child {
                 margin-bottom: 0;
@@ -943,17 +930,12 @@ onUnmounted(() => {
                   display: flex;
                   align-items: center;
                   gap: 8px;
-                  margin-bottom: 6px;
+                  margin-bottom: 4px;
 
                   .user-name {
                     font-weight: 600;
-                    color: #333;
+                    color: #1f2937;
                     font-size: 13px;
-                  }
-
-                  .reply-target {
-                    color: #3b82f6;
-                    font-size: 12px;
                   }
 
                   .reply-time {
@@ -963,9 +945,9 @@ onUnmounted(() => {
                 }
 
                 .reply-text {
-                  color: #374151;
-                  line-height: 1.5;
-                  margin-bottom: 8px;
+                  color: #4b5563;
+                  line-height: 1.6;
+                  margin-bottom: 6px;
                   font-size: 13px;
                 }
 
@@ -973,30 +955,22 @@ onUnmounted(() => {
                   display: flex;
                   gap: 12px;
 
-                  .action-btn {
+                  .reply-btn {
                     display: flex;
                     align-items: center;
                     gap: 3px;
                     background: none;
                     border: none;
-                    color: #6b7280;
+                    color: #9ca3af;
                     font-size: 11px;
                     cursor: pointer;
-                    padding: 2px 6px;
-                    border-radius: 3px;
+                    padding: 2px 8px;
+                    border-radius: 20px;
                     transition: all 0.2s;
 
                     &:hover {
-                      background: #f3f4f6;
-                      color: #374151;
-                    }
-
-                    &.like-btn:hover {
-                      color: #ef4444;
-                    }
-
-                    i {
-                      font-size: 10px;
+                      background: #fff7ed;
+                      color: #f97316;
                     }
                   }
                 }
@@ -1006,27 +980,60 @@ onUnmounted(() => {
         }
       }
     }
-  }
 
+    .no-comments {
+      text-align: center;
+      padding: 40px 20px;
+      color: #9ca3af;
+
+      svg {
+        margin-bottom: 12px;
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+      }
+    }
+  }
 }
 
 // 响应式设计
 @media (max-width: 768px) {
   .detail {
     width: 95%;
+    margin-top: 20px;
+    border-radius: 16px;
 
     .back-btn {
-      padding: 15px 20px;
+      padding: 16px 20px;
+    }
 
-      .back-button {
-        padding: 8px 12px;
-        font-size: 13px;
-      }
+    .article-info h2 {
+      font-size: 20px;
+    }
+
+    .carousel-section .custom-carousel .carousel-image-item .carousel-img {
+      width: 220px;
+      height: 160px;
     }
 
     .stats {
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
+
+      .stat-item {
+        justify-content: center;
+      }
+    }
+
+    .comment-section {
+      padding: 20px 16px;
+      border-radius: 16px;
+
+      .comment-content {
+        padding: 12px;
+      }
     }
   }
 }

@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { BookIcon, PawIcon } from '../../../components/Icons'
 
 // 使用指南数据
 const guideList = ref([
@@ -45,7 +46,10 @@ const activeIndex = ref(null)
     <!-- 区块标题 -->
     <div class="section-header">
       <div class="header-left">
-        <span class="section-badge">📖 使用指南</span>
+        <span class="section-badge">
+          <BookIcon :size="16" color="#2563eb" />
+          使用指南
+        </span>
         <h2 class="section-title">快速上手</h2>
         <p class="section-sub">了解如何使用宠物服务平台的各项功能</p>
       </div>
@@ -58,7 +62,9 @@ const activeIndex = ref(null)
           <img src="@/assets/question.png" alt="使用指南插图" />
           <div class="image-overlay">
             <div class="overlay-content">
-              <div class="icon-box">🐾</div>
+              <div class="icon-box">
+                <PawIcon :size="32" color="#f97316" />
+              </div>
               <p>开启您的<br/>宠物生活之旅</p>
             </div>
           </div>

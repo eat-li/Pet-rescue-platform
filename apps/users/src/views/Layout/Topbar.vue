@@ -5,6 +5,7 @@ import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { baseURL } from '../../http/http'
 import { formatImageUrl } from '../../utils/imgformat'
 import throttle from '../../utils/throttle'
+import { PawIcon } from '../../components/Icons'
 
 
 
@@ -179,7 +180,7 @@ const goMyPets = () => {
         </ul>
       </div>
       <a href="/" class="btn btn-ghost text-xl font-bold">
-        <span class="text-orange-500">🐾</span>
+        <PawIcon :size="24" class="text-orange-500" />
         <span class="text-gray-800">Pet Service</span>
       </a>
     </div>

@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AdoptionCard from './Posts/AdoptionCard.vue'
 import { getAdoptionListAPI } from '@/api/adoption'
+import { PawIcon } from '@/components/Icons'
 
 const router = useRouter()
 
@@ -118,6 +119,11 @@ const statusClass = (val) => {
 
     <!-- 标题区 -->
     <div class="page-header">
+      <div class="hero-decor">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
       <div class="header-inner">
         <h1>领养代替购买，给它们一个家</h1>
         <p>目前共有 <strong>{{ pagination.totalItems }}</strong> 条领养信息</p>
@@ -151,38 +157,41 @@ const statusClass = (val) => {
         </div>
       </div>
 
-      <!-- 结果提示 -->
-      <div class="result-info">
-        共找到 <strong>{{ pagination.totalItems }}</strong> 条领养信息
-        <span v-if="pagination.totalPages > 1">，第 {{ pagination.currentPage }} / {{ pagination.totalPages }} 页</span>
-      </div>
-
-      <!-- 加载状态 -->
-      <div v-if="loading" class="loading-state">
-        <div class="loading-paw">🐾</div>
-        <p>正在加载中...</p>
+      <!-- 加载状态：骨架屏 -->
+      <div v-if="loading" class="skeleton-grid">
+        <div v-for="n in 6" :key="n" class="skeleton-card">
+          <div class="skeleton-img shimmer"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line w-60 shimmer"></div>
+            <div class="skeleton-line w-40 shimmer"></div>
+            <div class="skeleton-line w-80 shimmer"></div>
+            <div class="skeleton-line w-50 shimmer"></div>
+          </div>
+        </div>
       </div>
 
       <!-- 错误状态 -->
       <div v-else-if="error" class="error-state">
-        <div class="error-icon">😿</div>
+        <PawIcon :size="56" color="#ef4444" class="empty-icon-svg" />
         <p>{{ error }}</p>
         <button class="reset-btn" @click="fetchList(1)">重新加载</button>
       </div>
 
       <!-- 卡片网格 -->
-      <div v-else-if="adoptionList.length > 0" class="cards-grid">
+      <TransitionGroup v-else-if="adoptionList.length > 0" name="card-stagger" tag="div" class="cards-grid">
         <AdoptionCard
-          v-for="item in adoptionList"
+          v-for="(item, index) in adoptionList"
           :key="item.id"
           :adoption="item"
+          :style="{ '--stagger-index': index }"
         />
-      </div>
+      </TransitionGroup>
 
       <!-- 空状态 -->
       <div v-else class="empty-state">
-        <div class="empty-icon">🐾</div>
+        <PawIcon :size="56" color="#f97316" class="empty-icon-svg" />
         <p class="empty-text">暂无符合条件的领养信息</p>
+        <p class="empty-sub">试试调整筛选条件，或浏览全部领养信息</p>
         <button class="reset-btn" @click="resetFilter">重置筛选</button>
       </div>
 
@@ -273,27 +282,48 @@ const statusClass = (val) => {
 
 // ── 标题区 ──────────────────────────────────────────────
 .page-header {
-  background: white;
-  border-bottom: 1px solid #f0f0f0;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 40%, #fef3c7 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-decor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  span {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.12;
+    background: #f97316;
+
+    &:nth-child(1) { width: 120px; height: 120px; top: -30px; right: 10%; }
+    &:nth-child(2) { width: 80px; height: 80px; bottom: -20px; left: 5%; }
+    &:nth-child(3) { width: 50px; height: 50px; top: 20%; right: 30%; }
+  }
 }
 
 .header-inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 28px 20px 24px;
+  padding: 40px 20px 32px;
+  position: relative;
+  z-index: 1;
 
   h1 {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 800;
     color: #1a1a2e;
-    margin: 0 0 6px;
+    margin: 0 0 8px;
   }
 
   p {
-    font-size: 14px;
-    color: #9ca3af;
+    font-size: 15px;
+    color: #92400e;
     margin: 0;
-    strong { color: #f97316; font-weight: 600; }
+    opacity: 0.7;
+    strong { color: #f97316; font-weight: 700; opacity: 1; }
   }
 }
 
@@ -304,10 +334,13 @@ const statusClass = (val) => {
 }
 
 .filter-bar {
-  background: white;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 16px;
   padding: 20px 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   margin-bottom: 24px;
   display: flex;
   flex-direction: column;
@@ -337,11 +370,16 @@ const statusClass = (val) => {
   font-weight: 500;
 
   &:hover { border-color: #f97316; color: #f97316; }
-  &.active { background: #f97316; border-color: #f97316; color: white; }
+  &.active {
+    background: linear-gradient(135deg, #ff9a3c, #f97316);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.35);
+  }
 
-  &.status-tab-pending.active  { background: #16a34a; border-color: #16a34a; }
-  &.status-tab-approved.active { background: #6b7280; border-color: #6b7280; }
-  &.status-tab-rejected.active { background: #ef4444; border-color: #ef4444; }
+  &.status-tab-pending.active  { background: linear-gradient(135deg, #22c55e, #16a34a); border-color: transparent; box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35); }
+  &.status-tab-approved.active { background: linear-gradient(135deg, #9ca3af, #6b7280); border-color: transparent; box-shadow: 0 2px 8px rgba(107, 114, 128, 0.35); }
+  &.status-tab-rejected.active { background: linear-gradient(135deg, #f87171, #ef4444); border-color: transparent; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35); }
 }
 
 .result-info {
@@ -351,7 +389,71 @@ const statusClass = (val) => {
   strong { color: #f97316; }
 }
 
-.loading-state, .error-state {
+// ── 骨架屏 ──────────────────────────────────────────
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+
+  @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 640px)  { grid-template-columns: 1fr; }
+}
+
+.skeleton-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.skeleton-img {
+  height: 200px;
+  background: #f3f4f6;
+}
+
+.skeleton-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 7px;
+  background: #f3f4f6;
+
+  &.w-40 { width: 40%; }
+  &.w-50 { width: 50%; }
+  &.w-60 { width: 60%; }
+  &.w-80 { width: 80%; }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      transparent 100%
+    );
+    animation: shimmer-sweep 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+// ── 错误状态 ──────────────────────────────────────────
+.error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -359,13 +461,7 @@ const statusClass = (val) => {
   text-align: center;
 
   p { font-size: 16px; color: #9ca3af; margin: 12px 0; }
-
-  .loading-paw, .error-icon { font-size: 52px; animation: bounce 1.2s ease-in-out infinite; }
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  .empty-icon-svg { margin-bottom: 16px; animation: float-gentle 3s ease-in-out infinite; }
 }
 
 .cards-grid {
@@ -381,22 +477,35 @@ const statusClass = (val) => {
   text-align: center;
   padding: 80px 20px;
 
-  .empty-icon { font-size: 56px; margin-bottom: 16px; }
-  .empty-text { font-size: 16px; color: #9ca3af; margin: 0 0 20px; }
+  .empty-icon-svg {
+    margin-bottom: 16px;
+    opacity: 0.6;
+    animation: float-gentle 3s ease-in-out infinite;
+  }
+
+  .empty-text { font-size: 17px; color: #6b7280; margin: 0 0 6px; font-weight: 600; }
+  .empty-sub  { font-size: 14px; color: #9ca3af; margin: 0 0 20px; }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
 }
 
 .reset-btn {
   padding: 10px 24px;
-  background: #f97316;
+  background: linear-gradient(135deg, #ff9a3c, #f97316);
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
   margin-top: 12px;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
 
-  &:hover { background: #ea6c0a; }
+  &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4); }
 }
 
 .pagination {
@@ -437,7 +546,18 @@ const statusClass = (val) => {
     transition: all 0.2s;
 
     &:hover { border-color: #f97316; color: #f97316; }
-    &.active { background: #f97316; border-color: #f97316; color: white; box-shadow: 0 2px 8px rgba(249,115,22,0.4); }
+    &.active { background: linear-gradient(135deg, #ff9a3c, #f97316); border-color: transparent; color: white; box-shadow: 0 2px 8px rgba(249,115,22,0.4); }
   }
+}
+
+// ── 交错入场动画 ──────────────────────────────────────
+.card-stagger-enter-active {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition-delay: calc(var(--stagger-index, 0) * 0.07s);
+}
+
+.card-stagger-enter-from {
+  opacity: 0;
+  transform: translateY(24px);
 }
 </style>

@@ -3,6 +3,7 @@ const AdoptionApplication = require('../models/Rescue/AdoptionApplication')
 const User = require('../models/User/User')
 const Pet = require('../models/User/MyPet')
 const { uploadToOSS } = require('../utils/ossUpload')
+const { validateSex, validateVaccineStatus } = require('../utils/Validate')
 
 // 创建领养宠物信息
 exports.AdoptionCreateService = async (req, res) => {
@@ -97,39 +98,23 @@ exports.AdoptionCreateService = async (req, res) => {
       }
 
       // 验证疫苗状态
-      const validVaccineStatus = ['unvaccinated', 'one_dose', 'two_doses', 'three_doses', 'completed']
-      if (!validVaccineStatus.includes(vaccineStatus)) {
-
+      const vaccineResult = validateVaccineStatus(vaccineStatus)
+      if (!vaccineResult.success) {
         return res.status(400).json({
           code: 400,
-          message: `无效的疫苗状态，可选值: ${validVaccineStatus.join(', ')}`
+          message: vaccineResult.error
         })
       }
 
       // 处理性别字段
-      let currentSex = sex
-      if (typeof sex !== 'boolean') {
-        if (typeof sex === 'string') {
-          const lowerSex = sex.toLowerCase()
-          if (lowerSex === 'true') {
-            currentSex = true
-          } else if (lowerSex === 'false') {
-            currentSex = false
-          } else {
-
-            return res.status(400).json({
-              code: 400,
-              message: '宠物性别必须为true或false'
-            })
-          }
-        } else {
-
-          return res.status(400).json({
-            code: 400,
-            message: '宠物性别必须为布尔值（true/false）'
-          })
-        }
+      const sexResult = validateSex(sex)
+      if (!sexResult.success) {
+        return res.status(400).json({
+          code: 400,
+          message: sexResult.error
+        })
       }
+      const currentSex = sexResult.value
 
       // 验证出生日期
       if (isNaN(new Date(birthday).getTime())) {

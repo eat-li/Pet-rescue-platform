@@ -6,6 +6,7 @@ import { useUserStore } from '@/stores/user'
 import { formatImageUrl } from '@/utils/imgformat'
 import Toast from '@/components/Common/Toast.vue'
 import { useToast } from '@/hooks/Common/useToast.js'
+import { PawIcon, CartIcon, WarningIcon, PartyIcon } from '@/components/Icons'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -200,20 +201,20 @@ onMounted(fetchCart)
     <div class="cart-header">
       <div class="header-content">
         <button class="back-btn" @click="router.back()">← 返回</button>
-        <h1>🛒 我的购物车</h1>
+        <h1>我的购物车</h1>
         <p class="header-desc">{{ cartItems.length }} 项服务待预约</p>
       </div>
     </div>
 
     <!-- 加载中 -->
     <div v-if="loading" class="loading-state">
-      <div class="loading-icon">🐾</div>
+      <PawIcon :size="52" color="#f97316" class="loading-icon" />
       <p>加载中...</p>
     </div>
 
     <!-- 空购物车 -->
     <div v-else-if="cartItems.length === 0" class="empty-state">
-      <div class="empty-icon">🛒</div>
+      <CartIcon :size="56" color="#f97316" class="empty-icon-svg" />
       <h3>购物车空空如也</h3>
       <p>快去挑选心仪的服务吧</p>
       <button class="browse-btn" @click="goServiceList">浏览服务</button>
@@ -291,7 +292,7 @@ onMounted(fetchCart)
             <span class="count-badge">{{ cartItems.length }}</span>
             <span>项服务待预约</span>
           </div>
-          <p class="footer-hint">💡 每项服务需单独选择预约时间</p>
+          <p class="footer-hint">每项服务需单独选择预约时间</p>
         </div>
         <div class="footer-right">
           <div class="total-price">
@@ -306,7 +307,7 @@ onMounted(fetchCart)
     <div v-if="showBookingModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>📅 预约服务</h3>
+          <h3>预约服务</h3>
           <button class="close-btn" @click="closeModal">×</button>
         </div>
         
@@ -374,9 +375,10 @@ onMounted(fetchCart)
 
 // 头部
 .cart-header {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 40%, #fef3c7 100%);
   padding: 40px 20px;
-  color: white;
+  position: relative;
+  overflow: hidden;
 }
 
 .header-content {
@@ -385,26 +387,30 @@ onMounted(fetchCart)
 }
 
 .back-btn {
-  background: rgba(255,255,255,0.2);
-  border: 1px solid rgba(255,255,255,0.4);
-  color: white;
+  background: white;
+  border: 1.5px solid #e5e7eb;
+  color: #6b7280;
   padding: 6px 16px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
   margin-bottom: 12px;
-  &:hover { background: rgba(255,255,255,0.3); }
+  transition: all 0.2s;
+  &:hover { border-color: #f97316; color: #f97316; }
 }
 
 .cart-header h1 {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
+  color: #1a1a2e;
   margin: 0 0 6px;
 }
 
 .header-desc {
-  font-size: 14px;
-  opacity: 0.9;
+  font-size: 15px;
+  color: #92400e;
+  opacity: 0.7;
   margin: 0;
 }
 
@@ -416,9 +422,20 @@ onMounted(fetchCart)
   padding: 100px 20px;
 }
 
-.loading-icon, .empty-icon {
-  font-size: 64px;
+.loading-icon {
+  animation: float-gentle 3s ease-in-out infinite;
   margin-bottom: 16px;
+}
+
+.empty-icon-svg {
+  margin-bottom: 16px;
+  opacity: 0.6;
+  animation: float-gentle 3s ease-in-out infinite;
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
 }
 
 .empty-state h3 {
@@ -434,14 +451,16 @@ onMounted(fetchCart)
 
 .browse-btn {
   padding: 12px 32px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #ff9a3c, #f97316);
   color: white;
   border: none;
   border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  &:hover { transform: scale(1.02); }
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.35);
+  transition: all 0.3s;
+  &:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(249, 115, 22, 0.45); }
 }
 
 // 主内容
@@ -499,7 +518,7 @@ onMounted(fetchCart)
   border: 1.5px solid #f0f0f0;
   transition: all 0.2s;
 
-  &.selected { border-color: #8b5cf6; }
+  &.selected { border-color: #f97316; }
 }
 
 .item-check {
@@ -545,8 +564,8 @@ onMounted(fetchCart)
 
 .item-type {
   font-size: 12px;
-  color: #8b5cf6;
-  background: #f5f3ff;
+  color: #f97316;
+  background: #fff7ed;
   display: inline-block;
   padding: 2px 10px;
   border-radius: 20px;
@@ -586,14 +605,16 @@ onMounted(fetchCart)
 
 .book-btn {
   padding: 8px 16px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #ff9a3c, #f97316);
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  &:hover { transform: scale(1.02); }
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+  transition: all 0.3s;
+  &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4); }
 }
 
 .remove-btn {
@@ -638,7 +659,7 @@ onMounted(fetchCart)
 }
 
 .count-badge {
-  background: #8b5cf6;
+  background: linear-gradient(135deg, #ff9a3c, #f97316);
   color: white;
   font-size: 12px;
   font-weight: 700;
@@ -731,7 +752,7 @@ onMounted(fetchCart)
   justify-content: space-between;
   align-items: center;
   padding: 12px;
-  background: #f5f3ff;
+  background: #fff7ed;
   border-radius: 10px;
   margin-bottom: 16px;
 }
@@ -767,7 +788,7 @@ onMounted(fetchCart)
     font-size: 14px;
     outline: none;
     box-sizing: border-box;
-    &:focus { border-color: #8b5cf6; }
+    &:focus { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1); }
   }
 }
 
@@ -784,8 +805,9 @@ onMounted(fetchCart)
   font-size: 12px;
   cursor: pointer;
   background: white;
-  &:hover { border-color: #8b5cf6; }
-  &.active { background: #8b5cf6; border-color: #8b5cf6; color: white; }
+  transition: all 0.2s;
+  &:hover { border-color: #f97316; color: #f97316; }
+  &.active { background: linear-gradient(135deg, #ff9a3c, #f97316); border-color: transparent; color: white; box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3); }
 }
 
 .modal-footer {
@@ -811,14 +833,15 @@ onMounted(fetchCart)
 .confirm-btn {
   flex: 1;
   padding: 12px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #ff9a3c, #f97316);
   color: white;
   border: none;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
   &:disabled { opacity: 0.6; }
-  &:hover:not(:disabled) { transform: scale(1.01); }
+  &:hover:not(:disabled) { transform: scale(1.01); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4); }
 }
 </style>

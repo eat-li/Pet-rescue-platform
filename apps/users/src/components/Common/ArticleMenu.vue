@@ -67,9 +67,12 @@ const handlePersonClick = (item) => {
           <!-- 菜单列表 -->
           <ul class="flex flex-col">
             <li
-              class="menu-item flex items-center justify-start h-10 w-full px-4 py-2 rounded-2xl hover:bg-gradient-to-l from-white to-purple-200"
+              class="menu-item flex items-center justify-start h-10 w-full px-4 py-2 rounded-2xl"
               :class="{ 'active': activeItem === item }" v-for="item in list" @click="handleItemClick(item)">
-              <i class="icon mr-3">{{ item.icon }}</i>
+              <span class="icon mr-3">
+                <component v-if="typeof item.icon === 'object'" :is="item.icon" :size="18" />
+                <template v-else>{{ item.icon }}</template>
+              </span>
               <span>{{ item.title }}</span>
             </li>
           </ul>
@@ -81,9 +84,12 @@ const handlePersonClick = (item) => {
           <!-- 我的互动列表 -->
           <ul class="flex flex-col" v-if="isLogin">
             <li
-              class="menu-item flex items-center justify-start h-10 w-full px-4 py-2 rounded-2xl hover:bg-gradient-to-l from-white to-purple-200"
+              class="menu-item flex items-center justify-start h-10 w-full px-4 py-2 rounded-2xl"
               :class="{ 'active': activePersonItem === item }" v-for="item in person" @click="handlePersonClick(item)">
-              <i class="icon mr-3">{{ item.icon }}</i>
+              <span class="icon mr-3">
+                <component v-if="typeof item.icon === 'object'" :is="item.icon" :size="18" />
+                <template v-else>{{ item.icon }}</template>
+              </span>
               <span>{{ item.title }}</span>
             </li>
           </ul>
@@ -108,49 +114,69 @@ const handlePersonClick = (item) => {
   </main>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .menu-card {
-  transform: translateY(10%);
-  color: #989CA4;
-
+  margin-top: 40px;
+  color: #6b7280;
   display: flex;
   width: 80%;
-  height: 80vh;
-  border-radius: 40px;
+  max-width: 1200px;
+  min-height: 80vh;
+  border-radius: 24px;
   overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f3f4f6;
+  background: #ffffff;
 
   /* 导航 */
   .menu-sidebar {
-    width: 250px;
-    background-color: #F7F7F7;
+    width: 240px;
+    background: #ffffff;
     display: flex;
     flex-direction: column;
     padding: 0;
-    border-top-left-radius: 40px;
-    border-bottom-left-radius: 40px;
+    border-right: 1px solid #f3f4f6;
+    flex-shrink: 0;
   }
 
   .menu-title {
-    padding: 20px 16px;
-    border-bottom: 1px solid #e0e0e001;
+    padding: 28px 20px 20px;
+
+    .title {
+      font-size: 20px !important;
+      font-weight: 700 !important;
+      color: #1a1a2e !important;
+      text-align: left !important;
+    }
   }
 
   .menu-list {
     flex: 1;
-    padding: 8px 0;
+    padding: 8px 12px;
   }
 
   .menu-item {
     cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 12px;
+    transition: all 0.2s ease;
+    margin-top: 4px;
+    font-size: 14px;
+    color: #6b7280;
+
+    &:hover {
+      background: #fff7ed;
+      color: #f97316;
+    }
+
+    &.active {
+      background: linear-gradient(135deg, #fff7ed, #ffedd5);
+      color: #ea580c;
+      font-weight: 600;
+    }
   }
 
-  /* 确保子元素不会超出圆角边界 */
-  .menu-item.active {
-    background: linear-gradient(to left, white, #d8b4fe);
-    color: #7c3aed;
-    font-weight: 500;
+  .menu-section-title {
+    padding: 16px 16px !important;
+    border-bottom: 1px solid #f3f4f6 !important;
   }
 
   /* 内容 */
@@ -158,33 +184,32 @@ const handlePersonClick = (item) => {
     flex: 1;
     display: flex;
     flex-direction: column;
-    border-top-right-radius: 40px;
-    border-bottom-right-radius: 40px;
     overflow: hidden;
+    min-width: 0;
   }
 
-  /* 头部 */
+  /* 底部 */
   .content-bottom {
-    height: 80px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #F7F7F7;
+    background: #f9fafb;
+    border-top: 1px solid #f3f4f6;
+    flex-shrink: 0;
   }
 
   .content-title {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .content-body {
     flex: 1;
     padding: 20px;
-    background-color: #F7F7F7;
+    background: #f9fafb;
     overflow-y: auto;
-    /* 添加垂直滚动 */
     overflow-x: hidden;
-    /* 隐藏水平滚动条 */
   }
 }
 
@@ -193,70 +218,68 @@ const handlePersonClick = (item) => {
   .menu-card {
     flex-direction: column;
     width: 95%;
-    height: 90vh;
-    transform: translateY(5%);
+    min-height: auto;
+    margin-top: 20px;
     border-radius: 20px;
   }
 
   .menu-sidebar {
     width: 100% !important;
-    height: 200px;
-    border-radius: 20px 20px 0 0 !important;
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  .menu-content {
-    border-radius: 0 0 20px 20px !important;
+    border-right: none !important;
+    border-bottom: 1px solid #f3f4f6;
   }
 
   .menu-title {
-    padding: 15px 16px;
+    padding: 16px 16px 12px;
 
     .title {
-      font-size: 1.25rem !important;
+      font-size: 18px !important;
     }
   }
 
   .menu-list {
-    padding: 4px 0;
+    padding: 4px 12px;
     display: flex;
     flex-direction: row;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     ul {
       flex-direction: row;
-      gap: 8px;
-      padding: 0 16px;
+      gap: 6px;
     }
 
     .menu-item {
-      min-width: 120px;
+      min-width: auto;
       height: 36px;
-      padding: 8px 12px;
-      font-size: 14px;
+      padding: 8px 14px;
+      font-size: 13px;
+      white-space: nowrap;
+      margin-top: 0;
 
       .icon {
-        margin-right: 8px;
+        margin-right: 6px;
       }
     }
   }
 
   .menu-section-title {
-    display: none;
+    display: none !important;
   }
 
   .content-body {
-    padding: 15px;
-    overflow-y: auto;
-    /* 移动端也支持滚动 */
-    overflow-x: hidden;
+    padding: 16px;
   }
 
   .content-bottom {
-    height: 60px;
+    height: 56px;
 
     .content-title {
-      font-size: 16px;
+      font-size: 14px;
     }
   }
 }

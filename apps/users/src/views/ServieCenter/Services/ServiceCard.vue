@@ -1,10 +1,12 @@
 <script setup>
+import { markRaw } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatImageUrl } from '@/utils/imgformat'
 import { addToCartAPI } from '@/api/service'
 import { useUserStore } from '@/stores/user'
 import { ref } from 'vue'
 import { useToast } from '@/hooks/Common/useToast.js'
+import { BathIcon, ScissorsIcon, PillIcon, BallIcon, StarIcon, PawIcon, CartIcon } from '../../../components/Icons'
 
 const props = defineProps({
   service: { type: Object, required: true }
@@ -20,14 +22,14 @@ const addingToCart = ref(false)
 const { showSuccess, showError } = useToast()
 
 const typeMap = {
-  basic_care:         { label: '基础护理', icon: '🛁', color: '#3b82f6', bg: '#eff6ff' },
-  beauty_styling:     { label: '美容造型', icon: '✂️', color: '#8b5cf6', bg: '#f5f3ff' },
-  health_medical:     { label: '健康医疗', icon: '💊', color: '#ef4444', bg: '#fef2f2' },
-  training_service:   { label: '训练服务', icon: '🎾', color: '#f59e0b', bg: '#fffbeb' },
-  special_experience: { label: '特色体验', icon: '⭐', color: '#10b981', bg: '#ecfdf5' }
+  basic_care:         { label: '基础护理', icon: markRaw(BathIcon), color: '#3b82f6', bg: '#eff6ff' },
+  beauty_styling:     { label: '美容造型', icon: markRaw(ScissorsIcon), color: '#f97316', bg: '#fff7ed' },
+  health_medical:     { label: '健康医疗', icon: markRaw(PillIcon), color: '#ef4444', bg: '#fef2f2' },
+  training_service:   { label: '训练服务', icon: markRaw(BallIcon), color: '#f59e0b', bg: '#fffbeb' },
+  special_experience: { label: '特色体验', icon: markRaw(StarIcon), color: '#10b981', bg: '#ecfdf5' }
 }
 
-const typeInfo = typeMap[props.service.type] || { label: props.service.type, icon: '🐾', color: '#6b7280', bg: '#f9fafb' }
+const typeInfo = typeMap[props.service.type] || { label: props.service.type, icon: markRaw(PawIcon), color: '#6b7280', bg: '#f9fafb' }
 
 const goDetail = () => {
   router.push(`/service/${props.service.id}`)
@@ -75,21 +77,22 @@ const handleBook = (e) => {
   <div class="service-card" @click="goDetail">
     <!-- 服务图片 -->
     <div class="card-image">
-      <img 
-        v-if="service.image" 
-        :src="formatImageUrl(service.image)" 
+      <img
+        v-if="service.image"
+        :src="formatImageUrl(service.image)"
         :alt="service.name"
         class="service-img"
       >
       <div v-else class="image-placeholder">
-        <span>🐾</span>
+        <PawIcon :size="48" color="#f97316" />
       </div>
+      <div class="image-overlay"></div>
     </div>
 
     <div class="card-body">
       <!-- 类型标签 -->
       <div class="type-badge" :style="{ color: typeInfo.color, background: typeInfo.bg }">
-        <span>{{ typeInfo.icon }}</span>
+        <component :is="typeInfo.icon" :size="14" :color="typeInfo.color" />
         <span>{{ typeInfo.label }}</span>
       </div>
 
@@ -107,7 +110,7 @@ const handleBook = (e) => {
           <span class="price-sub">起</span>
         </div>
         <div class="weight-info">
-          🐶 ≤ {{ service.weight }} kg
+          ≤ {{ service.weight }} kg
         </div>
       </div>
 
@@ -115,7 +118,10 @@ const handleBook = (e) => {
       <div class="action-buttons">
         <button class="cart-btn" :disabled="addingToCart" @click="handleAddToCart">
           <span v-if="addingToCart">添加中...</span>
-          <span v-else>🛒 加入购物车</span>
+          <span v-else>
+            <CartIcon :size="14" />
+            加入购物车
+          </span>
         </button>
         <button class="book-btn" @click="handleBook">立即预约</button>
       </div>
@@ -131,14 +137,22 @@ const handleBook = (e) => {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   border: 1.5px solid #f0f0f0;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   display: flex;
   flex-direction: column;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
-    border-color: #e0e7ff;
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    border-color: rgba(249, 115, 22, 0.2);
+
+    .service-img {
+      transform: scale(1.06);
+    }
+
+    .image-overlay {
+      opacity: 0.35;
+    }
   }
 }
 
@@ -154,7 +168,19 @@ const handleBook = (e) => {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.4s ease;
+  }
+
+  .image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.25), transparent);
+    opacity: 0.15;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
   }
 
   .image-placeholder {
@@ -163,17 +189,8 @@ const handleBook = (e) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-
-    span {
-      font-size: 48px;
-      opacity: 0.5;
-    }
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
   }
-}
-
-.service-card:hover .service-img {
-  transform: scale(1.05);
 }
 
 .card-body {
@@ -252,16 +269,20 @@ const handleBook = (e) => {
   flex: 1;
   padding: 10px;
   background: white;
-  color: #6366f1;
-  border: 1.5px solid #6366f1;
+  color: #f97316;
+  border: 1.5px solid #f97316;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 
   &:hover:not(:disabled) {
-    background: #f5f3ff;
+    background: #fff7ed;
   }
 
   &:disabled {
@@ -273,7 +294,7 @@ const handleBook = (e) => {
 .book-btn {
   flex: 1;
   padding: 10px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #ff9a3c, #f97316);
   color: white;
   border: none;
   border-radius: 10px;
@@ -281,10 +302,11 @@ const handleBook = (e) => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
 
   &:hover {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    transform: scale(1.02);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
   }
 }
 </style>

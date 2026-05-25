@@ -1,4 +1,5 @@
 <script setup>
+import { markRaw } from 'vue'
 import ArticleMenu from '../../components/Common/ArticleMenu.vue'
 import ArticleCard from './Posts/ArticleCard.vue'
 import SampleNav from '../../components/Common/SampleNav.vue'
@@ -8,6 +9,7 @@ import Addbutton from "../../components/Common/Addbutton.vue"
 import { useArticleList } from '../../hooks/Article/useArticleList.js'
 import { onMounted, ref, computed } from 'vue'
 import { useUserStore } from '../../stores/user'
+import { HomeIcon, UserIcon, StarIcon, BellIcon, HeartIcon, CollectionIcon } from '../../components/Icons'
 
 
 
@@ -91,22 +93,22 @@ const showWarningToast = (message) => {
 const menuList = ref([
   {
     title: '所有帖子',
-    icon: '🏠',
+    icon: markRaw(HomeIcon),
     type: 'all'
   },
   {
     title: '宠物日常',
-    icon: '👤',
+    icon: markRaw(UserIcon),
     type: 'pet_daily'
   },
   {
     title: '求助问题',
-    icon: '⭐',
+    icon: markRaw(StarIcon),
     type: 'help_question'
   },
   {
     title: '经验分享',
-    icon: '🔔',
+    icon: markRaw(BellIcon),
     type: 'experience_share'
   },
 ])
@@ -114,17 +116,17 @@ const menuList = ref([
 const personList = ref([
   {
     title: '我的点赞',
-    icon: '👤',
+    icon: markRaw(HeartIcon),
     type: 'like'
   },
   {
     title: '我的收藏',
-    icon: '⭐',
+    icon: markRaw(CollectionIcon),
     type: 'collection'
   },
   {
     title: '我的发布',
-    icon: '👤',
+    icon: markRaw(UserIcon),
     type: 'publish'
   }
 ])
@@ -152,9 +154,19 @@ onMounted(async () => {
       </template>
 
       <template #bottom>
-        <div class="join grid grid-cols-2">
-          <button class="join-item btn btn-outline" @click="handlePreviousPage">上一页</button>
-          <button class="join-item btn btn-outline" @click="handleNextPage">下一页</button>
+        <div class="pagination">
+          <button class="page-btn" @click="handlePreviousPage">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            上一页
+          </button>
+          <button class="page-btn" @click="handleNextPage">
+            下一页
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
       </template>
     </ArticleMenu>
@@ -166,4 +178,39 @@ onMounted(async () => {
   </section>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.pagination {
+  display: flex;
+  gap: 12px;
+
+  .page-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    svg {
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      background: #f97316;
+      border-color: #f97316;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+
+      svg path { stroke: #fff; }
+    }
+  }
+}
+</style>

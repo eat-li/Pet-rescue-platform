@@ -1,7 +1,8 @@
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, markRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getServiceDetailAPI, createBookingAPI, addToCartAPI } from '@/api/service'
+import { BathIcon, ScissorsIcon, PillIcon, BallIcon, StarIcon, PawIcon, ClipboardIcon, PartyIcon, WarningIcon, CartIcon } from '@/components/Icons'
 
 const route = useRoute()
 const router = useRouter()
@@ -12,15 +13,15 @@ const loading = ref(true)
 const error = ref(null)
 
 const typeMap = {
-  basic_care:         { label: '基础护理', icon: '🛁', color: '#3b82f6', bg: '#eff6ff' },
-  beauty_styling:     { label: '美容造型', icon: '✂️', color: '#8b5cf6', bg: '#f5f3ff' },
-  health_medical:     { label: '健康医疗', icon: '💊', color: '#ef4444', bg: '#fef2f2' },
-  training_service:   { label: '训练服务', icon: '🎾', color: '#f59e0b', bg: '#fffbeb' },
-  special_experience: { label: '特色体验', icon: '⭐', color: '#10b981', bg: '#ecfdf5' }
+  basic_care:         { label: '基础护理', icon: markRaw(BathIcon), color: '#f97316', bg: '#fff7ed' },
+  beauty_styling:     { label: '美容造型', icon: markRaw(ScissorsIcon), color: '#f59e0b', bg: '#fffbeb' },
+  health_medical:     { label: '健康医疗', icon: markRaw(PillIcon), color: '#ef4444', bg: '#fef2f2' },
+  training_service:   { label: '训练服务', icon: markRaw(BallIcon), color: '#16a34a', bg: '#f0fdf4' },
+  special_experience: { label: '特色体验', icon: markRaw(StarIcon), color: '#d97706', bg: '#fef3c7' }
 }
 
 const typeInfo = computed(() =>
-  service.value ? (typeMap[service.value.type] || { label: service.value.type, icon: '🐾', color: '#6b7280', bg: '#f9fafb' }) : {}
+  service.value ? (typeMap[service.value.type] || { label: service.value.type, icon: markRaw(PawIcon), color: '#6b7280', bg: '#f9fafb' }) : {}
 )
 
 // ── 预约表单 ──────────────────────────────────────────────
@@ -126,13 +127,13 @@ onMounted(fetchDetail)
 
     <!-- 加载中 -->
     <div v-if="loading" class="loading-state">
-      <div class="loading-icon">🐾</div>
+      <PawIcon :size="52" color="#f97316" class="loading-icon" />
       <p>正在加载...</p>
     </div>
 
     <!-- 错误 -->
     <div v-else-if="error || !service" class="error-state">
-      <div>😿</div>
+      <PawIcon :size="52" color="#ef4444" />
       <p>{{ error || '服务不存在' }}</p>
       <button class="error-back-btn" @click="router.back()">返回</button>
     </div>
@@ -156,7 +157,8 @@ onMounted(fetchDetail)
         <div class="header-inner">
           <div class="header-left">
             <span class="type-badge" :style="{ color: typeInfo.color, background: typeInfo.bg }">
-              {{ typeInfo.icon }} {{ typeInfo.label }}
+              <component :is="typeInfo.icon" :size="14" :color="typeInfo.color" />
+              {{ typeInfo.label }}
             </span>
             <h1>{{ service.name }}</h1>
           </div>
@@ -178,7 +180,8 @@ onMounted(fetchDetail)
                 <span class="info-label">服务类型</span>
                 <span class="info-val">
                   <span class="type-tag" :style="{ color: typeInfo.color, background: typeInfo.bg }">
-                    {{ typeInfo.icon }} {{ typeInfo.label }}
+                    <component :is="typeInfo.icon" :size="14" :color="typeInfo.color" />
+                    {{ typeInfo.label }}
                   </span>
                 </span>
               </div>
@@ -209,7 +212,7 @@ onMounted(fetchDetail)
 
           <!-- 温馨提示 -->
           <div class="tips-card">
-            <h3 class="section-title">📋 预约须知</h3>
+            <h3 class="section-title"><ClipboardIcon :size="16" color="#f97316" /> 预约须知</h3>
             <ul class="tips-list">
               <li>请提前确认宠物体重，超重可能影响服务效果</li>
               <li>预约成功后请保持联系方式畅通，等待工作人员确认</li>
@@ -222,7 +225,7 @@ onMounted(fetchDetail)
         <!-- 右：预约面板 -->
         <div class="booking-panel">
           <div class="panel-card" v-if="!submitSuccess">
-            <h3 class="panel-title">📅 立即预约</h3>
+            <h3 class="panel-title">立即预约</h3>
 
             <div class="form-group">
               <label class="form-label">宠物名称 <span class="required">*</span></label>
@@ -263,11 +266,11 @@ onMounted(fetchDetail)
             </div>
 
             <!-- 错误提示 -->
-            <p v-if="formError" class="form-error">⚠️ {{ formError }}</p>
+            <p v-if="formError" class="form-error"><WarningIcon :size="14" color="#ef4444" /> {{ formError }}</p>
 
             <!-- 操作按钮 -->
             <button class="submit-btn" :disabled="submitting" @click="handleSubmit">
-              {{ submitting ? '提交中...' : '✅ 确认预约' }}
+              {{ submitting ? '提交中...' : '确认预约' }}
             </button>
 
             <button
@@ -275,13 +278,14 @@ onMounted(fetchDetail)
               :disabled="cartAdding"
               @click="handleAddToCart"
             >
-              {{ cartSuccess ? '✅ 已加入购物车' : (cartAdding ? '加入中...' : '🛒 加入购物车') }}
+              <CartIcon :size="14" />
+              {{ cartSuccess ? '已加入购物车' : (cartAdding ? '加入中...' : '加入购物车') }}
             </button>
           </div>
 
           <!-- 预约成功 -->
           <div class="success-card" v-else>
-            <div class="success-icon">🎉</div>
+            <PartyIcon :size="52" color="#16a34a" />
             <h3>预约成功！</h3>
             <p>我们将尽快与您联系确认预约时间</p>
             <div class="success-info">
@@ -312,12 +316,17 @@ onMounted(fetchDetail)
   padding: 120px 20px;
   font-size: 52px;
   p { font-size: 16px; color: #9ca3af; margin: 16px 0; }
-  .loading-icon { animation: bounce 1.2s ease-in-out infinite; }
+  .loading-icon { animation: float-gentle 3s ease-in-out infinite; }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
 }
 
 .error-back-btn {
   padding: 10px 24px;
-  background: #8b5cf6;
+  background: linear-gradient(135deg, #ff9a3c, #f97316);
   color: white;
   border: none;
   border-radius: 8px;
@@ -325,9 +334,9 @@ onMounted(fetchDetail)
   font-weight: 600;
   cursor: pointer;
   margin-top: 12px;
-  &:hover { background: #7c3aed; }
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+  &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4); }
 }
-@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
 // ── 顶部导航 ────────────────────────────────────────────
 .top-nav {
@@ -362,8 +371,8 @@ onMounted(fetchDetail)
   transition: all 0.15s;
 
   &:hover {
-    color: #8b5cf6;
-    background: #f5f3ff;
+    color: #f97316;
+    background: #fff7ed;
   }
 }
 
@@ -427,6 +436,16 @@ onMounted(fetchDetail)
   flex-shrink: 0;
 }
 
+.type-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .header-right {
   display: flex;
   align-items: center;
@@ -477,6 +496,9 @@ onMounted(fetchDetail)
   margin: 0 0 18px;
   padding-bottom: 12px;
   border-bottom: 2px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .info-grid {
@@ -529,7 +551,7 @@ onMounted(fetchDetail)
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  border: 1px solid #e0e7ff;
+  border: 1px solid rgba(249, 115, 22, 0.12);
 }
 .panel-title {
   font-size: 17px;
@@ -555,10 +577,14 @@ onMounted(fetchDetail)
   font-size: 14px;
   color: #374151;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   box-sizing: border-box;
   background: #fafafa;
-  &:focus { border-color: #8b5cf6; background: white; }
+  &:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    background: white;
+  }
 }
 .form-textarea { resize: vertical; }
 
@@ -576,8 +602,13 @@ onMounted(fetchDetail)
   cursor: pointer;
   background: white;
   transition: all 0.2s;
-  &:hover { border-color: #8b5cf6; color: #8b5cf6; }
-  &.active { background: #8b5cf6; border-color: #8b5cf6; color: white; }
+  &:hover { border-color: #f97316; color: #f97316; }
+  &.active {
+    background: linear-gradient(135deg, #ff9a3c, #f97316);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3);
+  }
 }
 
 .form-error {
@@ -587,12 +618,16 @@ onMounted(fetchDetail)
   padding: 8px 12px;
   background: #fef2f2;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .submit-btn {
   width: 100%;
   padding: 13px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #ff9a3c, #f97316);
   color: white;
   border: none;
   border-radius: 12px;
@@ -601,7 +636,8 @@ onMounted(fetchDetail)
   cursor: pointer;
   margin-top: 4px;
   transition: all 0.3s;
-  &:hover:not(:disabled) { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.35);
+  &:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249, 115, 22, 0.45); }
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 
@@ -609,15 +645,19 @@ onMounted(fetchDetail)
   width: 100%;
   padding: 11px;
   background: white;
-  color: #8b5cf6;
-  border: 1.5px solid #8b5cf6;
+  color: #f97316;
+  border: 1.5px solid #f97316;
   border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   margin-top: 10px;
   transition: all 0.2s;
-  &:hover:not(:disabled) { background: #f5f3ff; }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  &:hover:not(:disabled) { background: #fff7ed; }
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 
@@ -628,8 +668,11 @@ onMounted(fetchDetail)
   padding: 32px 24px;
   text-align: center;
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  .success-icon { font-size: 52px; margin-bottom: 12px; }
-  h3 { font-size: 20px; font-weight: 700; color: #16a34a; margin: 0 0 8px; }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  h3 { font-size: 20px; font-weight: 700; color: #16a34a; margin: 0; }
   p  { font-size: 14px; color: #6b7280; margin: 0 0 20px; }
 }
 .success-info {

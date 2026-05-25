@@ -5,6 +5,7 @@ import { getAdoptionDetailAPI, submitAdoptionApplicationAPI } from '@/api/adopti
 import Toast from '@/components/Common/Toast.vue'
 import { useToast } from '@/hooks/Common/useToast.js'
 import { useUserStore } from '@/stores/user'
+import { LocationIcon, PhoneIcon, MailIcon, SparkleIcon, GameIcon, ClipboardIcon, CommentIcon, PawIcon, PartyIcon, WarningIcon } from '@/components/Icons'
 
 const route = useRoute()
 const router = useRouter()
@@ -207,14 +208,14 @@ onMounted(fetchDetail)
           <!-- 联系 + 地点 -->
           <div class="contact-card">
             <div class="contact-item">
-              <span class="contact-icon">📍</span>
+              <LocationIcon :size="20" color="#f97316" />
               <div>
                 <p class="contact-label">所在地点</p>
                 <p class="contact-val">{{ location }}</p>
               </div>
             </div>
             <div class="contact-item">
-              <span class="contact-icon">📞</span>
+              <PhoneIcon :size="20" color="#f97316" />
               <div>
                 <p class="contact-label">联系方式</p>
                 <p class="contact-val">{{ contact }}</p>
@@ -229,10 +230,10 @@ onMounted(fetchDetail)
               class="apply-btn"
               @click="handleApplyClick"
             >
-              💌 申请领养
+              <MailIcon :size="16" /> 申请领养
             </button>
             <div v-else class="publisher-notice">
-              🐾 这是您发布的领养帖子
+              <PawIcon :size="16" color="#16a34a" /> 这是您发布的领养帖子
             </div>
           </template>
           <button v-else class="apply-btn disabled" disabled>
@@ -280,7 +281,7 @@ onMounted(fetchDetail)
 
           <!-- 性格标签 -->
           <div v-if="pet.nature && pet.nature.length > 0" class="section-block">
-            <h3 class="section-title">🌟 宠物性格</h3>
+            <h3 class="section-title"><SparkleIcon :size="16" color="#f97316" /> 宠物性格</h3>
             <div class="nature-tags">
               <span v-for="tag in pet.nature" :key="tag" class="nature-tag">{{ tag }}</span>
             </div>
@@ -288,7 +289,7 @@ onMounted(fetchDetail)
 
           <!-- 爱好标签 -->
           <div v-if="pet.hobby && pet.hobby.length > 0" class="section-block">
-            <h3 class="section-title">🎮 宠物爱好</h3>
+            <h3 class="section-title"><GameIcon :size="16" color="#f97316" /> 宠物爱好</h3>
             <div class="nature-tags">
               <span v-for="tag in pet.hobby" :key="tag" class="hobby-tag">{{ tag }}</span>
             </div>
@@ -296,19 +297,19 @@ onMounted(fetchDetail)
 
           <!-- 领养要求 -->
           <div class="section-block">
-            <h3 class="section-title">📋 领养要求</h3>
+            <h3 class="section-title"><ClipboardIcon :size="16" color="#f97316" /> 领养要求</h3>
             <p class="section-text">{{ requirements }}</p>
           </div>
 
           <!-- 说明信息 -->
           <div v-if="adoption.other_msg" class="section-block">
-            <h3 class="section-title">💬 其他说明</h3>
+            <h3 class="section-title"><CommentIcon :size="16" color="#f97316" /> 其他说明</h3>
             <p class="section-text">{{ adoption.other_msg }}</p>
           </div>
 
           <!-- 宠物其他信息 -->
           <div v-if="pet.other_msg" class="section-block">
-            <h3 class="section-title">🐾 宠物介绍</h3>
+            <h3 class="section-title"><PawIcon :size="16" color="#f97316" /> 宠物介绍</h3>
             <p class="section-text">{{ pet.other_msg }}</p>
           </div>
         </div>
@@ -320,7 +321,7 @@ onMounted(fetchDetail)
       <div v-if="showModal" class="adopt-apply-overlay" @click.self="showModal = false">
         <div class="adopt-apply-box">
           <div v-if="applySuccess" class="apply-success">
-            <div class="success-icon">🎉</div>
+            <PartyIcon :size="52" color="#16a34a" />
             <h3>申请已提交！</h3>
             <p>发布人会尽快与您联系，请保持电话畅通。</p>
           </div>
@@ -354,7 +355,7 @@ onMounted(fetchDetail)
               </div>
             </div>
             <div v-if="applyError" class="adopt-apply-error">
-              ⚠️ {{ applyError }}
+              <WarningIcon :size="14" color="#ef4444" /> {{ applyError }}
             </div>
             <div class="adopt-apply-footer">
               <button class="cancel-btn" @click="showModal = false">取消</button>
@@ -456,12 +457,27 @@ onMounted(fetchDetail)
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    box-shadow: inset 0 0 0 1px rgba(249, 115, 22, 0.12);
+    pointer-events: none;
+  }
 
   img {
     width: 100%;
     height: 300px;
     object-fit: cover;
     display: block;
+    transition: transform 0.5s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.03);
   }
 }
 
@@ -473,6 +489,7 @@ onMounted(fetchDetail)
   align-items: center;
   gap: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-left: 3px solid #f97316;
 
   .publisher-avatar {
     width: 48px;
@@ -502,7 +519,6 @@ onMounted(fetchDetail)
     align-items: flex-start;
     gap: 12px;
 
-    .contact-icon { font-size: 20px; margin-top: 2px; }
     .contact-label { font-size: 12px; color: #9ca3af; margin: 0; }
     .contact-val   { font-size: 14px; font-weight: 500; color: #374151; margin: 4px 0 0; }
   }
@@ -520,9 +536,24 @@ onMounted(fetchDetail)
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(249,115,22,0.4);
   transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  animation: apply-pulse 2.5s ease-in-out infinite;
+  animation-play-state: paused;
 
-  &:hover:not(.disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(249,115,22,0.5); }
+  &:not(.disabled) {
+    animation-play-state: running;
+    &:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(249,115,22,0.5); }
+  }
+
   &.disabled { background: #d1d5db; box-shadow: none; cursor: not-allowed; }
+}
+
+@keyframes apply-pulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(249, 115, 22, 0.4); }
+  50%      { box-shadow: 0 4px 24px rgba(249, 115, 22, 0.6); }
 }
 
 .publisher-notice {
@@ -582,6 +613,12 @@ onMounted(fetchDetail)
     display: flex;
     flex-direction: column;
     gap: 4px;
+    transition: background 0.2s, transform 0.2s;
+
+    &:hover {
+      background: #fff7ed;
+      transform: translateY(-1px);
+    }
 
     .info-label { font-size: 12px; color: #9ca3af; }
     .info-value { font-size: 15px; font-weight: 600; color: #1f2937; }
@@ -589,7 +626,15 @@ onMounted(fetchDetail)
 }
 
 .section-block {
-  .section-title { font-size: 15px; font-weight: 700; color: #374151; margin: 0 0 10px; }
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #374151;
+    margin: 0 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
   .section-text  { font-size: 14px; color: #6b7280; line-height: 1.7; margin: 0;
     white-space: pre-wrap; background: #f9fafb; border-radius: 8px; padding: 12px; }
 }
@@ -667,23 +712,26 @@ onMounted(fetchDetail)
 
     label { font-size: 14px; font-weight: 500; color: #374151; .required { color: #ef4444; } }
 
-    input, select, textarea {
+    :deep(input), :deep(select), :deep(textarea) {
       padding: 10px 14px;
-      border: 1.5px solid #e5e7eb !important;
+      border: 1.5px solid #e5e7eb;
       border-radius: 10px;
       font-size: 14px;
       color: #1f2937;
-      outline: none !important;
-      transition: border-color 0.2s;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
       font-family: inherit;
       background: #ffffff;
       width: 100%;
       box-sizing: border-box;
 
-      &:focus { border-color: #f97316 !important; }
+      &:focus {
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+      }
     }
 
-    textarea { resize: vertical; }
+    :deep(textarea) { resize: vertical; }
   }
 }
 
@@ -731,6 +779,10 @@ onMounted(fetchDetail)
   text-align: center;
   background: #fef2f2;
   border-top: 1px solid #fecaca;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .apply-success {
@@ -739,9 +791,9 @@ onMounted(fetchDetail)
   align-items: center;
   padding: 40px 24px;
   text-align: center;
+  gap: 8px;
 
-  .success-icon { font-size: 52px; margin-bottom: 16px; }
-  h3 { font-size: 20px; font-weight: 700; color: #1f2937; margin: 0 0 8px; }
+  h3 { font-size: 20px; font-weight: 700; color: #1f2937; margin: 0; }
   p  { font-size: 14px; color: #6b7280; margin: 0; }
 }
 </style>

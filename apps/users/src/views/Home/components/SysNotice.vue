@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { getNoticeListAPI } from '@/api/notice'
 import { baseURL } from '../../../http/http.js'
 import { formatImageUrl } from '../../../utils/imgformat.js'
+import { MegaphoneIcon } from '../../../components/Icons'
 
 const router = useRouter()
 
@@ -148,7 +149,7 @@ const goToNoticeDetail = (id) => {
     <!-- 空状态 -->
     <div v-else class="box-container empty-container">
       <div class="empty-state">
-        <span>📢</span>
+        <MegaphoneIcon :size="48" color="#9ca3af" />
         <p>暂无系统公告</p>
       </div>
     </div>

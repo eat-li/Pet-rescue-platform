@@ -43,9 +43,12 @@ const handleItemClick = (item) => {
           <!-- 菜单列表 -->
           <ul class="flex flex-col">
             <li
-              class="menu-item flex items-center justify-start h-10 w-full px-4 py-2 rounded-2xl hover:bg-gradient-to-l from-white to-purple-200"
+              class="menu-item flex items-center justify-start h-10 w-full px-4 py-2 rounded-2xl"
               :class="{ 'active': activeItem === item }" v-for="item in list" @click="handleItemClick(item)">
-              <i class="icon mr-3">{{ item.icon }}</i>
+              <span class="icon mr-3">
+                <component v-if="typeof item.icon === 'object'" :is="item.icon" :size="18" />
+                <template v-else>{{ item.icon }}</template>
+              </span>
               <span>{{ item.title }}</span>
             </li>
           </ul>
@@ -108,10 +111,14 @@ const handleItemClick = (item) => {
     margin-top: 12px;
   }
 
+  .menu-item:hover {
+    background: linear-gradient(to left, #fff7ed, #ffedd5);
+  }
+
   /* 确保子元素不会超出圆角边界 */
   .menu-item.active {
-    background: linear-gradient(to left, white, #d8b4fe);
-    color: #7c3aed;
+    background: linear-gradient(to left, #fff7ed, #fed7aa);
+    color: #ea580c;
     font-weight: 500;
   }
 

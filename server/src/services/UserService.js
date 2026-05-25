@@ -76,7 +76,7 @@ exports.UserRegister = async (req, res) => {
     })
 
   } catch (err) {
-    console.log("注册失败", err)
+    console.error("注册失败", err)
     return res.status(500).json({
       code: 500,
       message: '注册失败'
@@ -146,7 +146,7 @@ exports.UserLoginService = async (req, res) => {
 
 
   } catch (err) {
-    console.log("登录失败", err)
+    console.error("登录失败", err)
     return res.status(500).json({
       code: 500,
       message: '登录失败'
@@ -269,7 +269,7 @@ exports.UserUpdateService = async (req, res) => {
       data: safeUserData
     })
   } catch (err) {
-    console.log("更新用户信息失败", err)
+    console.error("更新用户信息失败", err)
     return res.status(500).json({
       code: 500,
       message: '更新用户信息失败'
@@ -442,7 +442,7 @@ exports.UserListService = async (req, res) => {
 
 
   } catch (err) {
-    console.log("获取用户列表失败", err)
+    console.error("获取用户列表失败", err)
     return res.status(500).json({
       code: 500,
       message: '获取用户列表失败'
@@ -579,7 +579,7 @@ exports.UserUploadAvatarService = async (req, res) => {
       }
     })
   } catch (err) {
-    console.log(err)
+    console.error('上传头像失败', err)
     return res.status(500).json({
       code: 500,
       message: '上传头像失败'

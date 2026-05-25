@@ -25,6 +25,7 @@ router.get("/:id", UserService.UserDetailService)
 // 用户头像上传
 router.post(
   "/avatar/:id",
+  PersonAuth,
   upload.single('avatar'),
   UserService.UserUploadAvatarService
 )

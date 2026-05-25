@@ -2,6 +2,7 @@ const Pet = require('../models/User/MyPet')
 const { Op } = require('sequelize')
 const User = require('../models/User/User')
 const { uploadToOSS } = require('../utils/ossUpload')
+const { validateSex, validateVaccineStatus, validatePagination } = require('../utils/Validate')
 
 // 添加用户宠物
 exports.UserPetAddService = async (req, res) => {
@@ -35,35 +36,23 @@ exports.UserPetAddService = async (req, res) => {
     }
 
     // 验证疫苗状态有效性
-    const validVaccineStatus = ['unvaccinated', 'one_dose', 'two_doses', 'three_doses', 'completed']
-    if (!validVaccineStatus.includes(vaccineStatus)) {
+    const vaccineResult = validateVaccineStatus(vaccineStatus)
+    if (!vaccineResult.success) {
       return res.status(400).json({
         code: 400,
-        message: `无效的疫苗状态，可选值: ${validVaccineStatus.join(', ')}`
+        message: vaccineResult.error
       })
     }
 
     // 验证性别是否为布尔值（兼容字符串形式）
-    if (typeof sex !== 'boolean') {
-      if (typeof sex === 'string') {
-        const lowerSex = sex.toLowerCase()
-        if (lowerSex === 'true') {
-          currentSex = true
-        } else if (lowerSex === 'false') {
-          currentSex = false
-        } else {
-          return res.status(400).json({
-            code: 400,
-            message: '宠物性别必须为true或false'
-          })
-        }
-      } else {
-        return res.status(400).json({
-          code: 400,
-          message: '宠物性别必须为布尔值（true/false）'
-        })
-      }
+    const sexResult = validateSex(sex)
+    if (!sexResult.success) {
+      return res.status(400).json({
+        code: 400,
+        message: sexResult.error
+      })
     }
+    currentSex = sexResult.value
 
     // 验证出生日期格式
     if (isNaN(new Date(birthday).getTime())) {
@@ -381,11 +370,11 @@ exports.UserPetUpdateService = async (req, res) => {
       if (updateData[field] !== undefined) {
         switch (field) {
           case 'vaccineStatus': {
-            const validStatus = ['unvaccinated', 'one_dose', 'two_doses', 'three_doses', 'completed'];
-            if (!validStatus.includes(updateData[field])) {
+            const vaccineResult = validateVaccineStatus(updateData[field])
+            if (!vaccineResult.success) {
               return res.status(400).json({
                 code: 400,
-                message: `无效的疫苗状态，可选值: ${validStatus.join(', ')}`
+                message: vaccineResult.error
               });
             }
             updates[field] = updateData[field];
@@ -393,28 +382,14 @@ exports.UserPetUpdateService = async (req, res) => {
           }
 
           case 'sex': {
-            let currentSex = updateData[field];
-            if (typeof currentSex !== 'boolean') {
-              if (typeof currentSex === 'string') {
-                const lowerSex = currentSex.toLowerCase();
-                if (lowerSex === 'true') {
-                  currentSex = true;
-                } else if (lowerSex === 'false') {
-                  currentSex = false;
-                } else {
-                  return res.status(400).json({
-                    code: 400,
-                    message: '宠物性别必须为true或false'
-                  });
-                }
-              } else {
-                return res.status(400).json({
-                  code: 400,
-                  message: '宠物性别必须为布尔值（true/false）'
-                });
-              }
+            const sexResult = validateSex(updateData[field])
+            if (!sexResult.success) {
+              return res.status(400).json({
+                code: 400,
+                message: sexResult.error
+              });
             }
-            updates[field] = currentSex;
+            updates[field] = sexResult.value;
             break;
           }
 
@@ -537,15 +512,35 @@ exports.DeletePetService = async (req, res) => {
 }
 
 // 批量删除宠物
-exports.DeleteBatchPetServie = async (req, res) => {
+exports.DeleteBatchPetService = async (req, res) => {
   try {
     const { ids } = req.body;
+    const currentUserId = req.userId;
+    const currentRole = req.role;
+
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
       return res.status(400).json({
         code: 400,
         message: '请提供要删除的宠物ID列表'
       });
     }
+
+    // 权限验证：非管理员只能删除自己的宠物
+    if (currentRole !== 'admin') {
+      const pets = await Pet.findAll({
+        where: { id: ids },
+        attributes: ['id', 'userId']
+      });
+
+      const unauthorizedPets = pets.filter(pet => pet.userId !== currentUserId);
+      if (unauthorizedPets.length > 0) {
+        return res.status(403).json({
+          code: 403,
+          message: '无权删除其他用户的宠物'
+        });
+      }
+    }
+
     await Pet.destroy({
       where: {
         id: ids
@@ -622,7 +617,7 @@ exports.GetAllPetCountService = async (req, res) => {
 }
 
 // 上传文章图片
-exports.PetUploadSerivice = async (req, res) => {
+exports.PetUploadService = async (req, res) => {
   try {
     const { id: userId } = req.currentUser; // 获取当前用户ID
     const file = req.file;

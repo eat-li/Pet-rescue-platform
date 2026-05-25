@@ -19,7 +19,7 @@ router.patch('/:id', PersonAuth, MyPetService.UserPetUpdateService)
 
 
 // 批量删除宠物
-router.delete('/batch', PersonAuth, MyPetService.DeleteBatchPetServie)
+router.delete('/batch', PersonAuth, MyPetService.DeleteBatchPetService)
 
 // 删除宠物
 router.delete('/:id', PersonAuth, MyPetService.DeletePetService)
@@ -38,7 +38,7 @@ router.post(
   '/upload',
   PersonAuth,
   upload.single('pet'),
-  MyPetService.PetUploadSerivice)
+  MyPetService.PetUploadService)
 
 
 module.exports = router

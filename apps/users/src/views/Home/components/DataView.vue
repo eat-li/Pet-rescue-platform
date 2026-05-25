@@ -2,6 +2,7 @@
 import { ref, onMounted, inject, watch } from 'vue'
 import { getPetCountAPI } from '../../../api/pet'
 import { getUserCountAPI } from '../../../api/user'
+import { ChartIcon, UsersIcon, PawIcon, HospitalIcon, HeartIcon } from '../../../components/Icons'
 
 // 尝试从父组件获取共享数据
 const homeData = inject('homeData', null)
@@ -75,7 +76,10 @@ onMounted(async () => {
     <!-- 区块标题 -->
     <div class="section-header">
       <div class="header-left">
-        <span class="section-badge">📊 数据</span>
+        <span class="section-badge">
+          <ChartIcon :size="16" color="#92400e" />
+          数据
+        </span>
         <h2 class="section-title">平台统计</h2>
         <p class="section-sub">了解我们的宠物社区规模</p>
       </div>
@@ -85,7 +89,9 @@ onMounted(async () => {
     <div class="data-cards">
       <!-- 用户数量 -->
       <div class="data-card user-card">
-        <div class="card-icon">👥</div>
+        <div class="card-icon">
+          <UsersIcon :size="48" color="#3b82f6" />
+        </div>
         <div class="card-content">
           <div class="stat-label">注册用户</div>
           <div class="stat-value" :class="{ loading: userCount === 0 }">
@@ -97,7 +103,9 @@ onMounted(async () => {
 
       <!-- 宠物数量 -->
       <div class="data-card pet-card">
-        <div class="card-icon">🐾</div>
+        <div class="card-icon">
+          <PawIcon :size="48" color="#f97316" />
+        </div>
         <div class="card-content">
           <div class="stat-label">宠物伙伴</div>
           <div class="stat-value" :class="{ loading: petCount === 0 }">
@@ -109,7 +117,9 @@ onMounted(async () => {
 
       <!-- 服务类型 -->
       <div class="data-card service-card">
-        <div class="card-icon">🏥</div>
+        <div class="card-icon">
+          <HospitalIcon :size="48" color="#10b981" />
+        </div>
         <div class="card-content">
           <div class="stat-label">服务类型</div>
           <div class="stat-value">5+</div>
@@ -119,7 +129,9 @@ onMounted(async () => {
 
       <!-- 领养成功 -->
       <div class="data-card adoption-card">
-        <div class="card-icon">❤️</div>
+        <div class="card-icon">
+          <HeartIcon :size="48" color="#ef4444" />
+        </div>
         <div class="card-content">
           <div class="stat-label">领养成功</div>
           <div class="stat-value">{{ formatNumber(Math.floor(userCount * 0.3)) }}+</div>

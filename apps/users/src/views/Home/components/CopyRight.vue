@@ -41,12 +41,6 @@ const currentYear = new Date().getFullYear()
           <router-link to="/profile/settings">个人设置</router-link>
         </nav>
 
-        <nav class="footer-nav">
-          <h3 class="nav-title">联系方式</h3>
-          <a href="mailto:contact@petplatform.com">联系我们</a>
-          <a href="/help">帮助中心</a>
-          <a href="/privacy">隐私政策</a>
-        </nav>
       </div>
     </div>
 

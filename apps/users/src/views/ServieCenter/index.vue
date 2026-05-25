@@ -5,6 +5,7 @@ import ServiceCard from './Services/ServiceCard.vue'
 import { getServiceListAPI } from '@/api/service'
 import Toast from '@/components/Common/Toast.vue'
 import { useToast } from '@/hooks/Common/useToast.js'
+import { PawIcon, BathIcon, ScissorsIcon, PillIcon, BallIcon, StarIcon, CartIcon } from '@/components/Icons'
 
 const router = useRouter()
 
@@ -24,12 +25,12 @@ const pagination = ref({
 
 // ── 筛选 ─────────────────────────────────────────────────
 const typeOptions = [
-  { label: '全部',     value: '',                 icon: '🐾' },
-  { label: '基础护理', value: 'basic_care',         icon: '🛁' },
-  { label: '美容造型', value: 'beauty_styling',     icon: '✂️' },
-  { label: '健康医疗', value: 'health_medical',     icon: '💊' },
-  { label: '训练服务', value: 'training_service',   icon: '🎾' },
-  { label: '特色体验', value: 'special_experience', icon: '⭐' }
+  { label: '全部',     value: '',                 icon: PawIcon },
+  { label: '基础护理', value: 'basic_care',         icon: BathIcon },
+  { label: '美容造型', value: 'beauty_styling',     icon: ScissorsIcon },
+  { label: '健康医疗', value: 'health_medical',     icon: PillIcon },
+  { label: '训练服务', value: 'training_service',   icon: BallIcon },
+  { label: '特色体验', value: 'special_experience', icon: StarIcon }
 ]
 
 const activeType = ref('')
@@ -99,13 +100,18 @@ onMounted(() => fetchList(1))
         </button>
         <span class="nav-title">宠物服务</span>
         <button class="nav-cart-btn" @click="router.push('/profile/cart')">
-          购物车
+          <CartIcon :size="14" /> 购物车
         </button>
       </div>
     </nav>
 
     <!-- 标题区 -->
     <div class="page-header">
+      <div class="hero-decor">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
       <div class="header-inner">
         <h1>专业护理，贴心服务</h1>
         <p>目前共有 <strong>{{ pagination.totalItems }}</strong> 项服务</p>
@@ -123,7 +129,7 @@ onMounted(() => fetchList(1))
             :class="['filter-tab', { active: activeType === opt.value }]"
             @click="activeType = opt.value"
           >
-            {{ opt.icon }} {{ opt.label }}
+            <component :is="opt.icon" :size="14" /> {{ opt.label }}
           </button>
         </div>
       </div>
@@ -134,32 +140,41 @@ onMounted(() => fetchList(1))
         <span v-if="pagination.totalPages > 1">，第 {{ pagination.currentPage }} / {{ pagination.totalPages }} 页</span>
       </div>
 
-      <!-- 加载中 -->
-      <div v-if="loading" class="loading-state">
-        <div class="loading-icon">🐾</div>
-        <p>正在加载中...</p>
+      <!-- 加载中：骨架屏 -->
+      <div v-if="loading" class="skeleton-grid">
+        <div v-for="n in 9" :key="n" class="skeleton-card">
+          <div class="skeleton-img shimmer"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line w-40 shimmer"></div>
+            <div class="skeleton-line w-70 shimmer"></div>
+            <div class="skeleton-line w-90 shimmer"></div>
+            <div class="skeleton-line w-50 shimmer"></div>
+          </div>
+        </div>
       </div>
 
       <!-- 错误 -->
       <div v-else-if="error" class="error-state">
-        <div>😿</div>
+        <PawIcon :size="56" color="#ef4444" class="empty-icon-svg" />
         <p>{{ error }}</p>
         <button class="reset-btn" @click="fetchList(1)">重新加载</button>
       </div>
 
       <!-- 卡片列表 -->
-      <div v-else-if="serviceList.length > 0" class="cards-grid">
+      <TransitionGroup v-else-if="serviceList.length > 0" name="card-stagger" tag="div" class="cards-grid">
         <ServiceCard
-          v-for="item in serviceList"
+          v-for="(item, index) in serviceList"
           :key="item.id"
           :service="item"
+          :style="{ '--stagger-index': index }"
         />
-      </div>
+      </TransitionGroup>
 
       <!-- 空状态 -->
       <div v-else class="empty-state">
-        <div class="empty-icon">🔍</div>
-        <p>暂无该类型的服务</p>
+        <PawIcon :size="56" color="#f97316" class="empty-icon-svg" />
+        <p class="empty-text">暂无该类型的服务</p>
+        <p class="empty-sub">试试选择其他类型，或查看全部服务</p>
         <button class="reset-btn" @click="activeType = ''">查看全部</button>
       </div>
 
@@ -227,8 +242,8 @@ onMounted(() => fetchList(1))
   transition: all 0.15s;
 
   &:hover {
-    color: #8b5cf6;
-    background: #f5f3ff;
+    color: #f97316;
+    background: #fff7ed;
   }
 }
 
@@ -240,7 +255,7 @@ onMounted(() => fetchList(1))
 
 .nav-cart-btn {
   padding: 6px 16px;
-  background: #8b5cf6;
+  background: linear-gradient(135deg, #ff9a3c, #f97316);
   color: white;
   border: none;
   border-radius: 8px;
@@ -248,33 +263,58 @@ onMounted(() => fetchList(1))
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
 
-  &:hover { background: #7c3aed; }
+  &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4); }
 }
 
 // ── 标题区 ──────────────────────────────────────────────
 .page-header {
-  background: white;
-  border-bottom: 1px solid #f0f0f0;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 40%, #fef3c7 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-decor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  span {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.12;
+    background: #f97316;
+
+    &:nth-child(1) { width: 120px; height: 120px; top: -30px; right: 10%; }
+    &:nth-child(2) { width: 80px; height: 80px; bottom: -20px; left: 5%; }
+    &:nth-child(3) { width: 50px; height: 50px; top: 20%; right: 30%; }
+  }
 }
 
 .header-inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 28px 20px 24px;
+  padding: 40px 20px 32px;
+  position: relative;
+  z-index: 1;
 
   h1 {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 800;
     color: #1a1a2e;
-    margin: 0 0 6px;
+    margin: 0 0 8px;
   }
 
   p {
-    font-size: 14px;
-    color: #9ca3af;
+    font-size: 15px;
+    color: #92400e;
     margin: 0;
-    strong { color: #8b5cf6; font-weight: 600; }
+    opacity: 0.7;
+    strong { color: #f97316; font-weight: 700; opacity: 1; }
   }
 }
 
@@ -285,10 +325,13 @@ onMounted(() => fetchList(1))
 }
 
 .filter-bar {
-  background: white;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 16px;
   padding: 20px 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: center;
   gap: 16px;
@@ -315,31 +358,99 @@ onMounted(() => fetchList(1))
   cursor: pointer;
   transition: all 0.2s;
   font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 
-  &:hover { border-color: #8b5cf6; color: #8b5cf6; }
-  &.active { background: #8b5cf6; border-color: #8b5cf6; color: white; }
+  &:hover { border-color: #f97316; color: #f97316; }
+  &.active {
+    background: linear-gradient(135deg, #ff9a3c, #f97316);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.35);
+  }
 }
 
 .result-info {
   font-size: 14px;
   color: #9ca3af;
   margin-bottom: 20px;
-  strong { color: #8b5cf6; }
+  strong { color: #f97316; }
 }
 
-.loading-state, .error-state {
+// ── 骨架屏 ──────────────────────────────────────────
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+
+  @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 640px)  { grid-template-columns: 1fr; }
+}
+
+.skeleton-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.skeleton-img {
+  height: 160px;
+  background: #f3f4f6;
+}
+
+.skeleton-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 7px;
+  background: #f3f4f6;
+
+  &.w-40 { width: 40%; }
+  &.w-50 { width: 50%; }
+  &.w-70 { width: 70%; }
+  &.w-90 { width: 90%; }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      transparent 100%
+    );
+    animation: shimmer-sweep 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+// ── 错误状态 ──────────────────────────────────────────
+.error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 80px 20px;
-  font-size: 48px;
-  p { font-size: 16px; color: #9ca3af; margin: 12px 0; }
-  .loading-icon { animation: bounce 1.2s ease-in-out infinite; }
-}
+  text-align: center;
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-10px); }
+  p { font-size: 16px; color: #9ca3af; margin: 12px 0; }
+  .empty-icon-svg { margin-bottom: 16px; animation: float-gentle 3s ease-in-out infinite; }
 }
 
 .cards-grid {
@@ -354,19 +465,36 @@ onMounted(() => fetchList(1))
 .empty-state {
   text-align: center;
   padding: 80px 20px;
-  .empty-icon { font-size: 52px; margin-bottom: 16px; }
-  p { font-size: 16px; color: #9ca3af; margin: 0 0 20px; }
+
+  .empty-icon-svg {
+    margin-bottom: 16px;
+    opacity: 0.6;
+    animation: float-gentle 3s ease-in-out infinite;
+  }
+
+  .empty-text { font-size: 17px; color: #6b7280; margin: 0 0 6px; font-weight: 600; }
+  .empty-sub  { font-size: 14px; color: #9ca3af; margin: 0 0 20px; }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
 }
 
 .reset-btn {
   padding: 10px 24px;
-  background: #8b5cf6;
+  background: linear-gradient(135deg, #ff9a3c, #f97316);
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  &:hover { background: #7c3aed; }
+  transition: all 0.3s;
+  margin-top: 12px;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+
+  &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4); }
 }
 
 .pagination {
@@ -382,9 +510,11 @@ onMounted(() => fetchList(1))
     border: 1.5px solid #e5e7eb;
     border-radius: 10px;
     font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
     cursor: pointer;
     transition: all 0.2s;
-    &:hover:not(:disabled) { border-color: #8b5cf6; color: #8b5cf6; }
+    &:hover:not(:disabled) { border-color: #f97316; color: #f97316; }
     &:disabled { opacity: 0.4; cursor: not-allowed; }
   }
 
@@ -393,14 +523,28 @@ onMounted(() => fetchList(1))
   .page-num {
     min-width: 40px;
     height: 40px;
+    padding: 0 8px;
     background: white;
     border: 1.5px solid #e5e7eb;
     border-radius: 10px;
     font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
     cursor: pointer;
     transition: all 0.2s;
-    &:hover  { border-color: #8b5cf6; color: #8b5cf6; }
-    &.active { background: #8b5cf6; border-color: #8b5cf6; color: white; }
+    &:hover  { border-color: #f97316; color: #f97316; }
+    &.active { background: linear-gradient(135deg, #ff9a3c, #f97316); border-color: transparent; color: white; box-shadow: 0 2px 8px rgba(249,115,22,0.4); }
   }
+}
+
+// ── 交错入场动画 ──────────────────────────────────────
+.card-stagger-enter-active {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition-delay: calc(var(--stagger-index, 0) * 0.07s);
+}
+
+.card-stagger-enter-from {
+  opacity: 0;
+  transform: translateY(24px);
 }
 </style>
